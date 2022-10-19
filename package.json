@@ -1,0 +1,27 @@
+{
+  "name": "phoca-review",
+  "version": "1.0.0",
+  "description": "Can write reviews in the form of card and view in the form of album",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "scripts": {
+    "server": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bluepebble25/phoca-review.git"
+  },
+  "author": "Hyeonji Lee (bluepebble25)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bluepebble25/phoca-review/issues"
+  },
+  "homepage": "https://github.com/bluepebble25/phoca-review#readme"
+}
