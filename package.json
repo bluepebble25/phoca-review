@@ -4,6 +4,7 @@
   "description": "Can write reviews in the form of card and view in the form of album",
   "main": "index.js",
   "dependencies": {
+    "ajv": "^8.11.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "multer": "^1.4.5-lts.1"
