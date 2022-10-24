@@ -13,7 +13,7 @@
     "nodemon": "^2.0.20"
   },
   "scripts": {
-    "server": "node index.js",
+    "server": "cd ./server && node index.js",
     "dev": "nodemon -r dotenv/config server/index.js",
     "test": "npm test"
   },
