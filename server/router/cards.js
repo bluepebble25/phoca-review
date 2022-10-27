@@ -12,8 +12,16 @@ function mkdir(path) {
   }
 }
 
-mkdir('uploads/images');
-mkdir('uploads/card_info');
+function setDir(req, res, next) {
+  mkdir('uploads/images');
+  mkdir('uploads/card_info');
+
+  const exists = fs.existsSync('uploads/index.txt');
+  if (!exists) {
+    fs.writeFileSync('uploads/index.txt', '0');
+  }
+  next();
+}
 
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -32,7 +40,7 @@ const upload = multer({ storage: storage }).array('file');
 
 router.get('/', ctrl.getAllCards);
 router.get('/:id', ctrl.getCard);
-router.post('/', upload, ctrl.createCard);
+router.post('/', setDir, upload, ctrl.createCard);
 router.put('/:id', ctrl.updateCard);
 router.delete('/:id', ctrl.deleteCard);
 

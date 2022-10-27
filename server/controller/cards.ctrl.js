@@ -6,8 +6,41 @@ const { CardSchema } = require('../models/Card');
 
 // controllers
 const getAllCards = (req, res) => {
-  console.log(fs.existsSync('uploads'));
-  res.send('hi');
+  // 1. json 카드 정보를 담은 디렉토리 uploads/card_info를 읽어온다.
+  // 2. 파일 목록을 돌며 제목에 있는 id를 추출해 정렬한다.
+  // 3. 정렬된 배열을 limit 수만큼 slice해서 json 배열 형태로 보낸다.
+  // 4. 현재는 id 순으로 내보내지만 음악 재생목록처럼 유저가 직접 편집한 순서대로 보여주는 기능을 추가한다면
+  //    card_order라는 json 파일에 배열 형태로 카드의 id를 저장해 그 순서대로 내보내게 수정할 예정
+  req.query.limit = req.query.limit || 36;
+  const limit = parseInt(req.query.limit);
+  if (Number.isNaN(limit)) {
+    return res.status(400).end();
+  }
+
+  let cards = [];
+
+  fs.readdir('uploads/card_info/', (err, files) => {
+    console.log('files1: ', files);
+    files.sort((a, b) => {
+      return a.split('-')[0] - b.split('-'[0]); // 오름차순 정렬
+    });
+    console.log('files: ', files);
+    const fileList = files.splice(0, limit);
+
+    console.log('fileList: ', fileList);
+
+    fileList.forEach((file, i) => {
+      cards.push(
+        JSON.parse(
+          fs.readFileSync('uploads/card_info/' + file, function (err) {
+            '파일을 읽는데 실패했습니다.';
+          })
+        )
+      );
+    });
+    console.log('카드: ', cards);
+    res.json(cards);
+  });
 };
 
 const getCard = (req, res) => {};
@@ -21,19 +54,16 @@ const createCard = (req, res) => {
   console.log(isValid);
 
   if (!isValid) {
-    res.status(400).end();
+    res.send('유효하지 않은 형식입니다.').status(400);
   } else {
-    fs.writeFile(
-      `uploads/card_info/${cardInfo.title}.json`,
-      req.body.jsonObject,
-      function (err) {
-        if (err === null) {
-          res.send('upload success.');
-        } else {
-          res.send('upload fail');
-        }
-      }
+    let index = fs.readFileSync('uploads/index.txt');
+    index = parseInt(index);
+    fs.writeFileSync(
+      `uploads/card_info/${index + 1}-${cardInfo.title}.json`,
+      req.body.jsonObject
     );
+    fs.writeFileSync('uploads/index.txt', `${index + 1}`);
+    res.status(201);
   }
 };
 

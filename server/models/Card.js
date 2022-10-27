@@ -133,11 +133,11 @@ module.exports = { CardSchema };
 /*
 {
   "title": "hello",
-  "author": "word",
+  "author": "world",
   "front": {
     "content": "This is content",
     "background": { "color": "black"},
-    "image": { "url": "/uploads/images", "translate": [50, 0] },
+    "image": { "url": "uploads/card_info/filename_date", "translate": [50, 0] },
     "text": { "color": "white", "size": "medium" }
   },
   "back": {
