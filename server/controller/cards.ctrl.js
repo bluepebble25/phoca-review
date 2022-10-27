@@ -43,7 +43,24 @@ const getAllCards = (req, res) => {
   });
 };
 
-const getCard = (req, res) => {};
+const getCard = (req, res) => {
+  // 1. params에서 id를 가져온다.
+  // 2. card_info의 json 파일을 돌아가며 이름을 '-'으로 split해서 앞의 숫자가 id와 일치하는 파일을 읽어들인다.
+  // 3. json 정보 전송
+  const id = parseInt(req.params.id);
+  const fileList = fs.readdirSync('uploads/card_info/');
+  console.log(fileList);
+  const cardFile = fileList.filter(
+    (file) => parseInt(file.split('-')[0]) === id
+  );
+
+  console.log(cardFile[0]);
+  const card_info = JSON.parse(
+    fs.readFileSync('uploads/card_info/' + cardFile[0])
+  );
+  console.log(card_info);
+  res.json(card_info);
+};
 
 const createCard = (req, res) => {
   const cardInfo = JSON.parse(req.body.jsonObject);
