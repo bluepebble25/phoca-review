@@ -66,27 +66,73 @@ const createCard = (req, res) => {
   const cardInfo = JSON.parse(req.body.jsonObject);
   const isValid = ajv.validate(CardSchema, cardInfo);
 
-  console.log(JSON.parse(req.body.jsonObject));
-  console.log(req.files);
+  console.log('cardInfo', cardInfo);
+  console.log('req.files', req.files);
   console.log(isValid);
 
   if (!isValid) {
-    res.send('유효하지 않은 형식입니다.').status(400);
+    res.send('유효하지 않은 형식입니다.').status(400).end();
   } else {
+    const filePath = [
+      `uploads/images/${req.files[0].filename}` || '',
+      `uploads/images/${req.files[1].filename}` || '',
+    ];
+    cardInfo.front.image.url = filePath[0];
+    cardInfo.back.image.url = filePath[1];
+    console.log('cardInfo', cardInfo);
+
     let index = fs.readFileSync('uploads/index.txt');
     index = parseInt(index);
     fs.writeFileSync(
       `uploads/card_info/${index + 1}-${cardInfo.title}.json`,
-      req.body.jsonObject
+      JSON.stringify(cardInfo)
     );
     fs.writeFileSync('uploads/index.txt', `${index + 1}`);
-    res.status(201);
+    res.status(201).end();
   }
 };
 
-const updateCard = (req, res) => {};
+const updateCard = (req, res) => {
+  // 1. req.params.id를 가져온다.
+  // 2. 디렉토리 목록에서 해당 id를 가진 파일의 이름을 가져온다.
+  // 3. req.body에서 수정 버전의 json object를 받아온다.
+  // 4. 파일의 제목이 달라졌다면 파일 제목을 수정하고 내용은 받아온 json object로 덮어씌운다.
+};
 
-const deleteCard = (req, res) => {};
+const deleteCard = (req, res) => {
+  // 1. req.params.id를 가져온다.
+  // 2. 디렉토리 목록에서 해당 id를 가진 파일의 이름을 가져온다.
+  // 3. json 파일을 읽어서 이미지 url 부분을 가져온다.
+  // 4. 이미지를 삭제하고 json 파일도 삭제한다.
+  const id = parseInt(req.params.id);
+  const fileList = fs.readdirSync('uploads/card_info/');
+
+  const cardFile = fileList.filter(
+    (file) => parseInt(file.split('-')[0]) === id
+  )[0];
+
+  const card_info = JSON.parse(
+    fs.readFileSync('uploads/card_info/' + cardFile)
+  );
+
+  const imageUrl = [card_info.front.image.url, card_info.back.image.url];
+  console.log(imageUrl);
+
+  try {
+    imageUrl.forEach((file) => {
+      if (file !== undefined) {
+        fs.unlinkSync(file);
+        console.log('이미지 삭제 성공');
+      }
+    });
+    fs.unlinkSync('uploads/card_info/' + cardFile);
+    console.log('파일 삭제 성공');
+    res.status(200).end();
+  } catch (err) {
+    console.log(err);
+    res.send(err).status(500).end();
+  }
+};
 
 module.exports = {
   getAllCards,
