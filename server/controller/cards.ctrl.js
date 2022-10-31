@@ -97,6 +97,79 @@ const updateCard = (req, res) => {
   // 2. 디렉토리 목록에서 해당 id를 가진 파일의 이름을 가져온다.
   // 3. req.body에서 수정 버전의 json object를 받아온다.
   // 4. 파일의 제목이 달라졌다면 파일 제목을 수정하고 내용은 받아온 json object로 덮어씌운다.
+  const id = parseInt(req.params.id);
+  const fileList = fs.readdirSync('uploads/card_info/');
+  const filename = fileList.find((file) => {
+    if (parseInt(file.split('-')[0]) === id) return file;
+  });
+
+  console.log(fileList);
+  console.log('id:', id);
+  console.log('filename:', filename);
+  console.log('files', req.files);
+  console.log('jsonObject', req.body.jsonObject);
+
+  const card = JSON.parse(req.body.jsonObject);
+  const isValid = ajv.validate(CardSchema, card);
+
+  console.log('isValid', isValid);
+
+  if (!isValid) {
+    // 업로드된 이미지 삭제
+    res.status(400).send('유효하지 않은 형식입니다.').end();
+  } else {
+    const savedInfo = JSON.parse(
+      fs.readFileSync('uploads/card_info/' + filename)
+    );
+    console.log('savedInfo', savedInfo);
+    console.log('req.files', req.files);
+
+    /*
+      원래 image 프로퍼티가 없었고 image 프로퍼티를 받았다면 이미지 업로드(업로드는 이미 됐으므로 url을 최신으로 교체)
+      원래 image 프로퍼티가 있었고 image 프로퍼티 받았다면 교체
+      원래 image 프로퍼티가 있었고 image 프로퍼티 안받았다면 삭제
+    */
+    // 받은 이미지가 이미지 0개, 1개, 2개일 때 고려
+    // 교체할 새 이미지를 받았다면
+
+    if (req.files && req.files.length !== 0) {
+      const prevImages = [savedInfo.front.image.url, savedInfo.back.image.url];
+      const currentImages = [card.front.image.url, card.back.image.url];
+
+      prevImages.forEach((file) => {
+        if (file !== undefined) {
+          fs.unlinkSync(file);
+          console.log('이미지 삭제 성공');
+        }
+      });
+
+      const filePath = [
+        `uploads/images/${req.files[0].filename}` || '',
+        `uploads/images/${req.files[1].filename}` || '',
+      ];
+      card.front.image.url = filePath[0];
+      card.back.image.url = filePath[1];
+    }
+
+    fs.writeFileSync(`uploads/card_info/${filename}`, JSON.stringify(card));
+
+    // 이미지 파일 바꾸는 로직 작성해야 함
+    // 이미지 API를 따로 분리하자.
+    /* flow
+      1. (updateCard) 클라이언트로부터 변경 정보를 전송받는다.
+      2. (updateCard) 정보를 수정한다.
+      3. (updateImg) 클라이언트가 이미지 업데이트 API를 호출하며 이미지를 전송한다.
+      4. (updateImg) 이미지를 받았으면 업로드하고 기존 이미지를 삭제한 다음 카드 정보의 url 부분을 변경한다.
+    */
+
+    if (savedInfo.title !== card.title) {
+      fs.renameSync(
+        `uploads/card_info/${filename}`,
+        `uploads/card_info/${filename.split('-')[0]}-${card.title}.json`
+      );
+    }
+  }
+  res.status(200).end();
 };
 
 const deleteCard = (req, res) => {

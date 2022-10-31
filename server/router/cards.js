@@ -41,7 +41,7 @@ const upload = multer({ storage: storage }).array('file');
 router.get('/', ctrl.getAllCards);
 router.get('/:id', ctrl.getCard);
 router.post('/', setDir, upload, ctrl.createCard);
-router.put('/:id', ctrl.updateCard);
+router.post('/:id', setDir, upload, ctrl.updateCard);
 router.delete('/:id', ctrl.deleteCard);
 
 module.exports = router;
