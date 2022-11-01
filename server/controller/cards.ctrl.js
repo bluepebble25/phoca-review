@@ -3,6 +3,7 @@ const ajv = new Ajv();
 const fs = require('fs');
 
 const { CardSchema } = require('../models/Card');
+const { deleteFile } = require('../_lib/helpers');
 
 // controllers
 const getAllCards = (req, res) => {
@@ -124,43 +125,53 @@ const updateCard = (req, res) => {
     console.log('savedInfo', savedInfo);
     console.log('req.files', req.files);
 
-    /*
-      원래 image 프로퍼티가 없었고 image 프로퍼티를 받았다면 이미지 업로드(업로드는 이미 됐으므로 url을 최신으로 교체)
-      원래 image 프로퍼티가 있었고 image 프로퍼티 받았다면 교체
-      원래 image 프로퍼티가 있었고 image 프로퍼티 안받았다면 삭제
-    */
-    // 받은 이미지가 이미지 0개, 1개, 2개일 때 고려
-    // 교체할 새 이미지를 받았다면
+    const prevImages = [savedInfo.front.image, savedInfo.back.image];
+    const currentImages = [card.front.image, card.back.image];
+    // 받은 이미지가 이미지 0개, 1개, 2개일 때 경우의 수 고려
 
-    if (req.files && req.files.length !== 0) {
-      const prevImages = [savedInfo.front.image.url, savedInfo.back.image.url];
-      const currentImages = [card.front.image.url, card.back.image.url];
-
-      prevImages.forEach((file) => {
-        if (file !== undefined) {
-          fs.unlinkSync(file);
-          console.log('이미지 삭제 성공');
+    // 이미지 파일 안받았을 때
+    if (!req.files || (Array.isArray(req.files) && req.files.length === 0)) {
+      for (let i = 0; i < prevImages.length; i++) {
+        // 원래 url 있었는데 새로받은 url이 빈칸인 경우 (삭제)
+        if (prevImages[i].url !== '' && currentImages[i].url === '') {
+          deleteFile(prevImages[i].url);
         }
-      });
-
-      const filePath = [
-        `uploads/images/${req.files[0].filename}` || '',
-        `uploads/images/${req.files[1].filename}` || '',
-      ];
-      card.front.image.url = filePath[0];
-      card.back.image.url = filePath[1];
+      }
+    } else {
+      // 이미지 파일 1개 받았을 때
+      // O는 문자열 존재, X는 빈문자열 / 왼쪽은 기존 url, 오른쪽은 새로 받은 url
+      /*
+          1. 이전 url값과 현재값이 다른 경우
+            1) O X delete 성공
+            2) O O delete 후 req.files[0] 성공
+            3) X O req.files[0] 테스트 필요(삭제가 잘 안되는듯)
+          2. 이전 url값과 현재값이 같은 경우 skip (if문 작성 X)
+            4) O O  성공
+            5) X X  성공
+      */
+      if (req.files.length === 1) {
+        for (let i = 0; i < prevImages.length; i++) {
+          if (prevImages[i].url !== currentImages[i].url) {
+            if (prevImages[i].url !== '') {
+              deleteFile(prevImages[i].url);
+            }
+            if (currentImages[i].url !== '') {
+              currentImages[i].url = `uploads/images/${req.files[0].filename}`;
+            }
+          }
+        }
+      } else {
+        // 이미지 파일 2개 받았을 때
+        // 둘 다 삭제후 req.files[0], [1] 차례대로 current에 대입
+        prevImages.forEach((img) => {
+          deleteFile(img.url);
+        });
+        currentImages[0].url = `uploads/images/${req.files[0].filename}`;
+        currentImages[1].url = `uploads/images/${req.files[1].filename}`;
+      }
     }
 
     fs.writeFileSync(`uploads/card_info/${filename}`, JSON.stringify(card));
-
-    // 이미지 파일 바꾸는 로직 작성해야 함
-    // 이미지 API를 따로 분리하자.
-    /* flow
-      1. (updateCard) 클라이언트로부터 변경 정보를 전송받는다.
-      2. (updateCard) 정보를 수정한다.
-      3. (updateImg) 클라이언트가 이미지 업데이트 API를 호출하며 이미지를 전송한다.
-      4. (updateImg) 이미지를 받았으면 업로드하고 기존 이미지를 삭제한 다음 카드 정보의 url 부분을 변경한다.
-    */
 
     if (savedInfo.title !== card.title) {
       fs.renameSync(
