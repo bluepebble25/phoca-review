@@ -74,12 +74,29 @@ const createCard = (req, res) => {
   if (!isValid) {
     res.send('유효하지 않은 형식입니다.').status(400).end();
   } else {
-    const filePath = [
-      `uploads/images/${req.files[0].filename}` || '',
-      `uploads/images/${req.files[1].filename}` || '',
-    ];
-    cardInfo.front.image.url = filePath[0];
-    cardInfo.back.image.url = filePath[1];
+    const frontImg = cardInfo.front.image;
+    const backImg = cardInfo.back.image;
+    const images = [frontImg, backImg];
+    /*
+      1. 파일 0개 image.url = ''
+      2. 파일 1개 빈 문자열 아닌 곳에 image.url = req.files[0].filename
+      3. 파일 2개 image.url에 차례대로 files[0], files[1]의 filename 대입
+    */
+    if (req.files && req.files.length === 2) {
+      images.forEach((image, i) => {
+        image.url = `uploads/images/${req.files[i].filename}`;
+      });
+    } else if (req.files && req.files.length === 1) {
+      images.forEach((image) => {
+        if (image.url !== '') {
+          image.url = `uploads/images/${req.files[0].filename}`;
+        }
+      });
+    } else {
+      images.forEach((image) => {
+        image.url = '';
+      });
+    }
     console.log('cardInfo', cardInfo);
 
     let index = fs.readFileSync('uploads/index.txt');
