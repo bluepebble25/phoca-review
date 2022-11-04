@@ -3,7 +3,12 @@ const ajv = new Ajv();
 const fs = require('fs');
 
 const { CardSchema } = require('../models/Card');
-const { readCards, deleteFile } = require('../_lib/helpers');
+const {
+  readCards,
+  deleteFile,
+  getFilenameById,
+  readCard,
+} = require('../_lib/helpers');
 
 // controllers
 const getAllCards = (req, res) => {
@@ -183,37 +188,33 @@ const updateCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  // 1. req.params.id를 가져온다.
-  // 2. 디렉토리 목록에서 해당 id를 가진 파일의 이름을 가져온다.
-  // 3. json 파일을 읽어서 이미지 url 부분을 가져온다.
-  // 4. 이미지를 삭제하고 json 파일도 삭제한다.
   const id = parseInt(req.params.id);
-  const fileList = fs.readdirSync('uploads/card_info/');
+  if (Number.isNaN(id)) {
+    return res.status(400).send('id가 정수값인지 확인해주세요.');
+  }
 
-  const cardFile = fileList.filter(
-    (file) => parseInt(file.split('-')[0]) === id
-  )[0];
+  const filename = getFilenameById(id);
+  if (!filename) {
+    return res.status(404).send('해당 id와 일치하는 카드가 존재하지 않습니다.');
+  }
 
-  const card_info = JSON.parse(
-    fs.readFileSync('uploads/card_info/' + cardFile)
-  );
-
-  const imageUrl = [card_info.front.image.url, card_info.back.image.url];
-  console.log(imageUrl);
+  const card = readCard(filename);
+  const imageUrl = [card.front.image.url, card.back.image.url];
 
   try {
-    imageUrl.forEach((file) => {
-      if (file !== undefined) {
-        fs.unlinkSync(file);
+    imageUrl.forEach((url) => {
+      if (url !== '') {
+        deleteFile(url);
         console.log('이미지 삭제 성공');
       }
     });
-    fs.unlinkSync('uploads/card_info/' + cardFile);
+
+    deleteFile('uploads/card_info/' + filename);
     console.log('파일 삭제 성공');
     res.status(200).end();
   } catch (err) {
     console.log(err);
-    res.send(err).status(500).end();
+    res.status(500).send(err.message);
   }
 };
 

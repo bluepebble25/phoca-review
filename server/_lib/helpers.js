@@ -58,7 +58,7 @@ function deleteFile(path) {
     fs.unlinkSync(path);
     return true;
   } catch {
-    const err = new Error('삭제할 파일을 찾는데 실패했습니다.');
+    const err = new Error(`파일을 삭제하는데 오류가 발생했습니다.`);
     throw err;
   }
 }
