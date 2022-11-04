@@ -3,45 +3,27 @@ const ajv = new Ajv();
 const fs = require('fs');
 
 const { CardSchema } = require('../models/Card');
-const { deleteFile } = require('../_lib/helpers');
+const { readCards, deleteFile } = require('../_lib/helpers');
 
 // controllers
 const getAllCards = (req, res) => {
-  // 1. json 카드 정보를 담은 디렉토리 uploads/card_info를 읽어온다.
-  // 2. 파일 목록을 돌며 제목에 있는 id를 추출해 정렬한다.
-  // 3. 정렬된 배열을 limit 수만큼 slice해서 json 배열 형태로 보낸다.
-  // 4. 현재는 id 순으로 내보내지만 음악 재생목록처럼 유저가 직접 편집한 순서대로 보여주는 기능을 추가한다면
-  //    card_order라는 json 파일에 배열 형태로 카드의 id를 저장해 그 순서대로 내보내게 수정할 예정
-  req.query.limit = req.query.limit || 36;
-  const limit = parseInt(req.query.limit);
-  if (Number.isNaN(limit)) {
-    return res.status(400).end();
+  const page = parseInt(req.query.page || 1);
+  const limit = parseInt(req.query.limit || 36);
+
+  if (Number.isNaN(page) || Number.isNaN(limit)) {
+    return res
+      .status(400)
+      .send('page 혹은 limit에 정수값을 넣었는지 확인해주세요.');
   }
 
-  let cards = [];
-
-  fs.readdir('uploads/card_info/', (err, files) => {
-    console.log('files1: ', files);
-    files.sort((a, b) => {
-      return a.split('-')[0] - b.split('-'[0]); // 오름차순 정렬
-    });
-    console.log('files: ', files);
-    const fileList = files.splice(0, limit);
-
-    console.log('fileList: ', fileList);
-
-    fileList.forEach((file, i) => {
-      cards.push(
-        JSON.parse(
-          fs.readFileSync('uploads/card_info/' + file, function (err) {
-            '파일을 읽는데 실패했습니다.';
-          })
-        )
-      );
-    });
-    console.log('카드: ', cards);
+  try {
+    const cards = readCards('uploads/card_info/', page, limit);
     res.json(cards);
-  });
+  } catch (e) {
+    res
+      .status(500)
+      .send('서버에서 카드 값을 읽어오거나 전송하는데 문제가 생겼습니다.');
+  }
 };
 
 const getCard = (req, res) => {

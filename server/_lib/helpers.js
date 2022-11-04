@@ -20,24 +20,22 @@ function getFilenameById(cardId) {
 }
 
 /**
- * 전달받은 디렉토리(dir)에 위치한 카드들의 정보를 id 오름차순으로 배열에 담아 반환한다.
- * @param {string} dir 카드 정보 파일이 위치한 디렉토리
- * @param {number} page 조회하려는 페이지 번호. 한 페이지의 단위는 item 36개이다.
+ * 디렉토리(dir)에 위치한 카드들의 정보를 id 오름차순으로 배열에 담아 반환한다.
+ * @param {string} dir 카드 정보 파일이 위치한 디렉토리. 경로 뒤에 '/'까지 붙여야 한다.
+ * @param {number} page 조회하려는 페이지 번호. 한 페이지의 단위는 카드 36개이다.
  * @param {number} limit 가져올 최대 개수
  * @returns 카드 정보를 담은 배열
  */
 function readCards(dir, page, limit) {
   page = page || 1;
   limit = limit || 36;
-  const files = fs.readdirSync('uploads/card_info');
+  const files = fs.readdirSync(dir);
   files.sort((a, b) => {
-    return a.split('-')[0] - b.split('-'[0]); // 오름차순 정렬
+    return parseInt(a.split('-')[0]) - parseInt(b.split('-'[0])); // 오름차순 정렬
   });
   const fileList = files.splice((page - 1) * 36, limit);
 
-  const cards = fileList.map((file) =>
-    JSON.parse(fs.readFileSync('uploads/card_info/' + file))
-  );
+  const cards = fileList.map((file) => JSON.parse(fs.readFileSync(dir + file)));
   return cards;
 }
 
