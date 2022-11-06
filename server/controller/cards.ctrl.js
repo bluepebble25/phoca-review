@@ -32,22 +32,23 @@ const getAllCards = (req, res) => {
 };
 
 const getCard = (req, res) => {
-  // 1. params에서 id를 가져온다.
-  // 2. card_info의 json 파일을 돌아가며 이름을 '-'으로 split해서 앞의 숫자가 id와 일치하는 파일을 읽어들인다.
-  // 3. json 정보 전송
   const id = parseInt(req.params.id);
-  const fileList = fs.readdirSync('uploads/card_info/');
-  console.log(fileList);
-  const cardFile = fileList.filter(
-    (file) => parseInt(file.split('-')[0]) === id
-  );
+  if (Number.isNaN(id)) {
+    return res.status(400).send('id가 정수값인지 확인해주세요.');
+  }
 
-  console.log(cardFile[0]);
-  const card_info = JSON.parse(
-    fs.readFileSync('uploads/card_info/' + cardFile[0])
-  );
-  console.log(card_info);
-  res.json(card_info);
+  const filename = getFilenameById(id);
+  if (!filename) {
+    return res.status(404).send('해당 id와 일치하는 카드가 존재하지 않습니다.');
+  }
+
+  try {
+    const card = readCard(filename);
+    res.json(card);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send(e.message);
+  }
 };
 
 const createCard = (req, res) => {
