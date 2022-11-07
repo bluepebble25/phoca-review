@@ -8,6 +8,7 @@ const {
   deleteFile,
   getFilenameById,
   readCard,
+  timeStamp,
 } = require('../_lib/helpers');
 
 // controllers
@@ -52,49 +53,88 @@ const getCard = (req, res) => {
 };
 
 const createCard = (req, res) => {
-  const cardInfo = JSON.parse(req.body.jsonObject);
-  const isValid = ajv.validate(CardSchema, cardInfo);
+  try {
+    let card = JSON.parse(req.body.data);
+    const isValid = ajv.validate(CardSchema, card);
 
-  console.log('cardInfo', cardInfo);
-  console.log('req.files', req.files);
-  console.log(isValid);
-
-  if (!isValid) {
-    res.send('유효하지 않은 형식입니다.').status(400).end();
-  } else {
-    const frontImg = cardInfo.front.image;
-    const backImg = cardInfo.back.image;
-    const images = [frontImg, backImg];
-    /*
-      1. 파일 0개 image.url = ''
-      2. 파일 1개 빈 문자열 아닌 곳에 image.url = req.files[0].filename
-      3. 파일 2개 image.url에 차례대로 files[0], files[1]의 filename 대입
-    */
-    if (req.files && req.files.length === 2) {
-      images.forEach((image, i) => {
-        image.url = `uploads/images/${req.files[i].filename}`;
-      });
-    } else if (req.files && req.files.length === 1) {
-      images.forEach((image) => {
-        if (image.url !== '') {
-          image.url = `uploads/images/${req.files[0].filename}`;
-        }
-      });
+    if (!isValid) {
+      const err = new Error(
+        '클라이언트로부터 받은 정보가 Card Schema 양식에 맞지 않음.'
+      );
+      err.name = 'WrongFormError';
+      throw err;
     } else {
-      images.forEach((image) => {
-        image.url = '';
-      });
-    }
-    console.log('cardInfo', cardInfo);
+      // 현재 시각
+      card.date = timeStamp();
 
-    let index = fs.readFileSync('uploads/index.txt');
-    index = parseInt(index);
-    fs.writeFileSync(
-      `uploads/card_info/${index + 1}-${cardInfo.title}.json`,
-      JSON.stringify(cardInfo)
-    );
-    fs.writeFileSync('uploads/index.txt', `${index + 1}`);
-    res.status(201).end();
+      // 이미지 저장경로 처리
+      const frontImg = card.front.image;
+      const backImg = card.back.image;
+      const images = [frontImg, backImg];
+      /*
+        1. 파일 0개 image.url = ''
+        2. 파일 1개 image.url이 빈 문자열 아닌 곳에 image.url = req.files[0].filename
+        3. 파일 2개 image.url에 차례대로 files[0], files[1]의 filename 대입
+      */
+      if (req.files && req.files.length === 2) {
+        images.forEach((image, i) => {
+          image.url = `uploads/images/${req.files[i].filename}`;
+        });
+      } else if (req.files && req.files.length === 1) {
+        images.forEach((image) => {
+          if (image.url !== '') {
+            image.url = `uploads/images/${req.files[0].filename}`;
+          }
+        });
+      } else {
+        images.forEach((image) => {
+          image.url = '';
+        });
+      }
+
+      // 카드 id 프로퍼티 추가
+      let index = parseInt(fs.readFileSync('uploads/index.txt')) + 1;
+      const obj = {
+        id: index,
+      };
+      card = Object.assign(obj, card);
+
+      console.log('card', card);
+
+      // 카드 저장 및 인덱스 업데이트
+      fs.writeFileSync(
+        `uploads/card_info/${index}-${card.title}.json`,
+        JSON.stringify(card)
+      );
+      fs.writeFileSync('uploads/index.txt', `${index}`);
+      res.status(201).end();
+    }
+  } catch (e) {
+    console.error(e.stack);
+
+    // 카드 생성 중 오류가 생겼으므로 서버로 업로드된 이미지를 삭제한다.
+    req.files.forEach((file) => {
+      if (file) {
+        deleteFile(file.path);
+      }
+    });
+
+    // 에러 코드 및 메시지 전송
+    if (e.name === 'SyntaxError') {
+      res
+        .status(400)
+        .send(
+          '카드 정보는 JSON object 형태로 전송해야합니다. 오타가 없는지 확인해주세요.'
+        );
+    } else if (e.name === 'WrongFormError') {
+      res
+        .status(400)
+        .send(
+          '카드 정보를 양식(Schema)에 맞게 작성했는지, 빠뜨린 항목은 없는지 확인해주세요.'
+        );
+    } else {
+      res.status(500).send(e.message);
+    }
   }
 };
 
@@ -113,9 +153,9 @@ const updateCard = (req, res) => {
   console.log('id:', id);
   console.log('filename:', filename);
   console.log('files', req.files);
-  console.log('jsonObject', req.body.jsonObject);
+  console.log('data', req.body.data);
 
-  const card = JSON.parse(req.body.jsonObject);
+  const card = JSON.parse(req.body.data);
   const isValid = ajv.validate(CardSchema, card);
 
   console.log('isValid', isValid);

@@ -74,10 +74,31 @@ function isValid(schema, target) {
   return ajv.validate(schema, target);
 }
 
+/**
+ * 타임 스탬프. 현재 시각을 'YYYY-MM-DD hh:mm:ss' 형식의 문자열 형태로 반환한다.
+ * @returns 현재시각. 'YYYY-MM-DD hh:mm:ss' 형식의 문자열
+ */
+function timeStamp() {
+  function pad(n) {
+    return n >= 10 ? n : '0' + n;
+  }
+
+  const date = new Date();
+  let year = pad(date.getFullYear());
+  let month = pad(date.getMonth() + 1);
+  let day = pad(date.getDate());
+  let hour = pad(date.getHours());
+  let minute = pad(date.getMinutes());
+  let second = pad(date.getSeconds());
+
+  return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+}
+
 module.exports = {
   getFilenameById,
   readCards,
   readCard,
   deleteFile,
   isValid,
+  timeStamp,
 };
