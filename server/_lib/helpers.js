@@ -64,17 +64,6 @@ function deleteFile(path) {
 }
 
 /**
- * ajv.validate()의 wrapper 함수.
- * 대상(target)이 정의해놓은 JSON 스키마에 맞게 작성되었는지 검증한다.
- * @param {object} schema JSON 스키마
- * @param {object} target 검증할 대상인 JSON 객체
- * @returns validate하면 true, 아니면 false
- */
-function isValid(schema, target) {
-  return ajv.validate(schema, target);
-}
-
-/**
  * 타임 스탬프. 현재 시각을 'YYYY-MM-DD hh:mm:ss' 형식의 문자열 형태로 반환한다.
  * @returns 현재시각. 'YYYY-MM-DD hh:mm:ss' 형식의 문자열
  */
@@ -99,6 +88,5 @@ module.exports = {
   readCards,
   readCard,
   deleteFile,
-  isValid,
   timeStamp,
 };
