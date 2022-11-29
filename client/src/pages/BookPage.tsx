@@ -1,12 +1,13 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
+import Book from '../components/organisms/Book';
 
 function BookPage() {
   return (
-    <div>
-      BookPage
+    <>
+      <Book />
       <Outlet />
-    </div>
+    </>
   );
 }
 

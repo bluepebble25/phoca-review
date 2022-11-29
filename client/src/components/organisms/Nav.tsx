@@ -2,7 +2,7 @@ import Logo from '../atoms/Logo';
 
 function Nav() {
   return (
-    <nav>
+    <nav style={{ position: 'absolute' }}>
       <Logo padding="36px" />
     </nav>
   );
