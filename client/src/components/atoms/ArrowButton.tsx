@@ -5,11 +5,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 interface Props {
   icon: IconDefinition;
   type: 'prev' | 'next';
+  onClick?: React.MouseEventHandler;
 }
 
-function ArrowButton({ icon, type }: Props) {
+function ArrowButton({ icon, type, onClick }: Props) {
   return (
-    <button css={buttonStyle(type)}>
+    <button css={buttonStyle(type)} onClick={onClick}>
       <FontAwesomeIcon icon={icon} color="#4D5E80" fontSize="24px" />
     </button>
   );

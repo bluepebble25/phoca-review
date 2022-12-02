@@ -37,7 +37,11 @@ export const coverStyle = (order: 'first' | 'last') => css`
   border-radius: 2px 10px 10px 2px;
   box-shadow: 1px 1px 10px gray;
 `;
-export const paperStyle = css`
+export interface PaperProps {
+  isFlipped: boolean;
+}
+
+export const paperStyle = ({ isFlipped }: PaperProps) => css`
   position: absolute;
   z-index: 1;
   width: 100%;
@@ -45,6 +49,7 @@ export const paperStyle = css`
   transform-origin: left;
   transition: transform 0.8s;
   transform-style: preserve-3d;
+  ${isFlipped && 'transform: rotateY(-180deg);'}
 `;
 
 export const pageStyle = (face: 'front' | 'back') => css`
