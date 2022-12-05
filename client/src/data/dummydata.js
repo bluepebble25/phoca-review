@@ -6,7 +6,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -26,7 +26,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -46,7 +46,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -66,7 +66,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -86,7 +86,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -106,7 +106,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -126,7 +126,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -146,7 +146,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -166,7 +166,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -186,7 +186,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -206,7 +206,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -226,7 +226,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -246,7 +246,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -266,7 +266,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -286,7 +286,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -306,7 +306,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -326,7 +326,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -346,7 +346,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -366,7 +366,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -386,7 +386,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -406,7 +406,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -426,7 +426,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -446,7 +446,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -466,7 +466,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {
@@ -486,7 +486,7 @@ const data = [
     front: {
       content: 'This is content',
       background: {},
-      image: { url: 'sky-2342665_1920.jpg' },
+      image: { url: 'bird.jpg' },
       text: { color: 'white' },
     },
     back: {

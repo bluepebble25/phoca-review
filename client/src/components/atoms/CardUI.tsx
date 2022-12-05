@@ -3,78 +3,19 @@ import { css } from '@emotion/react';
 interface Props {
   title: string;
   content?: string;
-  author?: string;
+  author: string;
   front?: object;
   image?: string;
+  background?: string;
 }
 
-/*
-데이터 양식
-front: {
-  type: 'object',
-  properties: {
-    content: {
-      type: 'string',
-    },
-    background: {
-      type: 'object',
-      properties: {
-        color: {
-          type: 'string',
-        },
-        gradient: {
-          type: 'string',
-        },
-      },
-    },
-    image: {
-      type: 'object',
-      properties: {
-        url: {
-          type: 'string',
-        },
-        translate: {
-          type: 'array',
-          items: [
-            {
-              type: 'integer',
-            },
-            {
-              type: 'integer',
-            },
-          ],
-          minItems: 2,
-          additionalItems: false,
-        },
-      },
-      required: ['url', 'translate'],
-    },
-    text: {
-      type: 'object',
-      properties: {
-        color: {
-          type: 'string',
-        },
-        size: {
-          type: 'string',
-        },
-      },
-      required: ['color', 'size'],
-    },
-  }
-  */
-
-function CardUI({ title, content, author, image }: Props) {
+function CardUI({ title, content, author, image, background }: Props) {
   return (
     <div css={cardUIStyle}>
-      <img
-        src="https://images.unsplash.com/photo-1505118380757-91f5f5632de0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8d2F2ZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60"
-        alt="이미지"
-        css={imgStyle}
-      />
+      <img src="" alt="" css={imgStyle} />
       <div css={contentStyle}>
         <h2 css={titleStyle}>{title}</h2>
-        <p css={authorStyle}>감독/작가</p>
+        <p css={authorStyle}>{author}</p>
       </div>
     </div>
   );

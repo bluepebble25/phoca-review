@@ -38,12 +38,13 @@ export const coverStyle = (order: 'first' | 'last') => css`
   box-shadow: 1px 1px 10px gray;
 `;
 export interface PaperProps {
+  zIndex: string;
   isFlipped: boolean;
 }
 
-export const paperStyle = ({ isFlipped }: PaperProps) => css`
+export const paperStyle = ({ zIndex, isFlipped }: PaperProps) => css`
   position: absolute;
-  z-index: 1;
+  z-index: ${Number(zIndex)};
   width: 100%;
   height: 100%;
   transform-origin: left;

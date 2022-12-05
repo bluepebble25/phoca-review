@@ -1,36 +1,57 @@
-import { contentStyle, pageStyle, paperStyle } from '../../styles/book';
+import { paperStyle, pageStyle, contentStyle } from '../../styles/book';
 import CardUI from '../atoms/CardUI';
 
 interface PaperInfoProps {
-  cardList: Array<CardProps>;
+  cardList: Array<Array<CardProps>>;
+  zIndex: string;
   isFlipped: boolean;
 }
 
 interface CardProps {
   id: number;
+  title: string;
   author: string;
-  front: object;
-  back: object;
+  front: CardDetailProps;
+  back: CardDetailProps;
+  date: string;
 }
 
-function Paper({ cardList, isFlipped }: PaperInfoProps) {
+interface CardDetailProps {
+  content: string;
+  background: {
+    color?: string;
+    gradient?: string;
+  };
+  image: {
+    url: string;
+    translate: Array<Number>;
+  };
+  text: {
+    color: string;
+    size?: string;
+  };
+}
+
+function Paper({ cardList, zIndex, isFlipped }: PaperInfoProps) {
   return (
-    <div css={paperStyle({ isFlipped })}>
+    <div css={paperStyle({ zIndex, isFlipped })}>
       <div css={pageStyle('front')}>
         <div css={contentStyle}>
-          <CardUI title="cardList" />
-          <CardUI title="안녕" />
-          <CardUI title="반가워요" />
-          <CardUI title="bye" />
+          {cardList[0].map((card, i) => {
+            return (
+              <CardUI key={card.id} title={card.title} author={card.author} />
+            );
+          })}
         </div>
       </div>
 
       <div css={pageStyle('back')}>
         <div css={contentStyle}>
-          <CardUI title="뒷면" />
-          <CardUI title="반가워요" />
-          <CardUI title="hi" />
-          <CardUI title="bye" />
+          {cardList[1].map((card, i) => {
+            return (
+              <CardUI key={card.id} title={card.title} author={card.author} />
+            );
+          })}
         </div>
       </div>
     </div>

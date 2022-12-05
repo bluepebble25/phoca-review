@@ -70,6 +70,7 @@ function Book() {
                 key={cards.page}
                 cardList={cards.cardData}
                 isFlipped={cards.cardData.isFlipped}
+                zIndex={`${numOfPapers - cards.page + 1}`}
               />
             );
           })}
