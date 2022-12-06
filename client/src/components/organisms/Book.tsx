@@ -1,5 +1,5 @@
+import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import { sceneStyle, bookStyle, coverStyle } from '../../styles/book';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import ArrowButton from '../atoms/ArrowButton';
 import Cover from '../molecules/Cover';
@@ -10,6 +10,7 @@ function Book() {
   const [cardList, setCardList] = useState<any[]>([]);
   const [location, setLocation] = useState(0);
   const [isBookOpen, setIsBookOpen] = useState(false);
+  const [isCoversFlipped, setIsCoversFlipped] = useState([false, false]);
   const cardPerPage = 4; // 한 페이지당 보여지는 카드의 수
   const totalCardNum = 19;
   // let numOfPapers = Math.ceil(totalCardNum / (cardPerPage * 2));
@@ -28,6 +29,7 @@ function Book() {
       let chunkPerPaper = {
         page: i,
         isFlipped: false,
+        zIndex: numOfPapers - i + 1,
         cardData: [
           fetchedCards.slice(
             (i - 1) * cardPerPage * 2,
@@ -45,47 +47,108 @@ function Book() {
     setCardList(splitedResult);
   };
 
-  const onClickNextButton = () => {};
+  const onClickNextButton = () => {
+    goNextPage();
+  };
 
-  const onClickPrevButton = () => {};
+  const onClickPrevButton = () => {
+    goPrevPage();
+  };
+
+  function goNextPage() {
+    if (location < maxLocation) {
+      if (location === 0) {
+        setIsBookOpen(true);
+        setIsCoversFlipped([!isCoversFlipped[0], isCoversFlipped[1]]);
+      } else if (location === numOfPapers + 1) {
+        setIsBookOpen(false);
+        setIsCoversFlipped([isCoversFlipped[0], !isCoversFlipped[1]]);
+      } else {
+        const toggledArr = cardList.map((cards) =>
+          cards.page === location
+            ? { ...cards, isFlipped: !cards.isFlipped, zIndex: location }
+            : cards
+        );
+        setCardList(toggledArr);
+      }
+      setLocation(location + 1);
+    }
+  }
+
+  function goPrevPage() {
+    if (location > 0) {
+      if (location === 1) {
+        setIsBookOpen(false);
+        setIsCoversFlipped([!isCoversFlipped[0], isCoversFlipped[1]]);
+      } else if (location === maxLocation) {
+        setIsBookOpen(true);
+        setIsCoversFlipped([isCoversFlipped[0], !isCoversFlipped[1]]);
+      } else {
+        const toggledArr = cardList.map((cards) =>
+          cards.page === location - 1
+            ? { ...cards, isFlipped: !cards.isFlipped, zIndex: -cards.page }
+            : cards
+        );
+        setCardList(toggledArr);
+      }
+      setLocation(location - 1);
+    }
+  }
 
   return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <ArrowButton icon={faArrowLeft} type="prev" onClick={onClickPrevButton} />
+    <div css={containerStyle}>
+      <ArrowButton
+        icon={faArrowLeft}
+        type="prev"
+        isBookOpen={isBookOpen}
+        onClick={onClickPrevButton}
+      />
 
       {/* <!-- Book --> */}
       <div css={sceneStyle}>
-        <div css={bookStyle}>
-          {/* <Cover order="first" /> */}
+        <div css={bookStyle(isBookOpen, isCoversFlipped[1])}>
+          <Cover order="first" isFlipped={isCoversFlipped[0]} />
           {cardList.map((cards, i) => {
             return (
               <Paper
                 key={cards.page}
                 cardList={cards.cardData}
-                isFlipped={cards.cardData.isFlipped}
-                zIndex={`${numOfPapers - cards.page + 1}`}
+                isFlipped={cards.isFlipped}
+                zIndex={cards.zIndex}
               />
             );
           })}
-          <Cover order="last" />
-          <div css={coverStyle('last')}></div>
+          <Cover order="last" isFlipped={isCoversFlipped[1]} />
         </div>
       </div>
 
       <ArrowButton
         icon={faArrowRight}
         type="next"
+        isBookOpen={isBookOpen}
         onClick={onClickNextButton}
       />
     </div>
   );
 }
+
+const containerStyle = css`
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const sceneStyle = css`
+  perspective: 1500px;
+`;
+const bookStyle = (isBookOpen: boolean, isMoveToCenter: boolean) => css`
+  position: relative;
+  width: 366px;
+  height: 526px;
+  transform-style: preserve-3d;
+  ${isBookOpen && 'transform: translateX(50%);'}
+  ${isMoveToCenter && 'transform: translateX(104%);'}
+`;
 
 export default Book;

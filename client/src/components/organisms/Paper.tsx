@@ -1,4 +1,4 @@
-import { paperStyle, pageStyle, contentStyle } from '../../styles/book';
+import { css } from '@emotion/react';
 import CardUI from '../atoms/CardUI';
 
 interface PaperInfoProps {
@@ -34,7 +34,7 @@ interface CardDetailProps {
 
 function Paper({ cardList, zIndex, isFlipped }: PaperInfoProps) {
   return (
-    <div css={paperStyle({ zIndex, isFlipped })}>
+    <div css={paperStyle(zIndex, isFlipped)}>
       <div css={pageStyle('front')}>
         <div css={contentStyle}>
           {cardList[0].map((card, i) => {
@@ -57,5 +57,37 @@ function Paper({ cardList, zIndex, isFlipped }: PaperInfoProps) {
     </div>
   );
 }
+
+const paperStyle = (zIndex: string, isFlipped: boolean) => css`
+  position: absolute;
+  z-index: ${Number(zIndex)};
+  width: 100%;
+  height: 100%;
+  transform-origin: left;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+  ${isFlipped && 'transform: rotateY(-180deg);'}
+`;
+
+const pageStyle = (face: 'front' | 'back') => css`
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  position: absolute;
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  transform: ${face === 'back' && 'rotateY(180deg)'};
+`;
+
+const contentStyle = css`
+  padding-top: 24px;
+  width: 318px;
+  height: 227px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 24px;
+`;
 
 export default Paper;
