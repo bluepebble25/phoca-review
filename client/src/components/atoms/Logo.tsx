@@ -2,12 +2,12 @@ import { css } from '@emotion/react';
 import { Link } from 'react-router-dom';
 
 interface logoStyleProps {
-  padding?: string;
+  margin?: string;
 }
 
-function Logo({ padding }: logoStyleProps) {
+function Logo({ margin }: logoStyleProps) {
   return (
-    <h1 css={headerStyle(padding)}>
+    <h1 css={headerStyle(margin)}>
       <Link to="/cards">
         <span css={logoStyle}>Phoca Review</span>
       </Link>
@@ -15,9 +15,9 @@ function Logo({ padding }: logoStyleProps) {
   );
 }
 
-const headerStyle = (padding: string | undefined) => css`
+const headerStyle = (margin: string | undefined) => css`
   display: inline-block;
-  padding: ${padding};
+  margin: ${margin};
   font-size: 0;
 `;
 
