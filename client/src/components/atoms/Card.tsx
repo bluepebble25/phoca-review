@@ -5,18 +5,12 @@ interface CardProps {
 }
 
 interface CardFaceProps {
-  isCardFront: boolean;
   faceType: 'front' | 'back';
 }
 
-const CardFace: React.FC<CardFaceProps> = ({ faceType, isCardFront }) => {
+const CardFace: React.FC<CardFaceProps> = ({ faceType }) => {
   return (
-    <div
-      css={[
-        cardFaceStyle,
-        faceType === 'front' ? frontStyle(isCardFront) : backStyle(isCardFront),
-      ]}
-    >
+    <div css={[cardFaceStyle, faceType === 'front' ? frontStyle : backStyle]}>
       <div css={titleStyle}>
         {/* 36자 제한 */}
         제목을 입력 해주세요 제목을 입력해주세요 제목을 입력해주세요 제목
@@ -39,9 +33,9 @@ const CardFace: React.FC<CardFaceProps> = ({ faceType, isCardFront }) => {
 function Card({ isCardFront }: CardProps) {
   return (
     <div css={sceneStyle}>
-      <div css={cardStyle}>
-        <CardFace faceType="front" isCardFront={isCardFront} />
-        <CardFace faceType="back" isCardFront={isCardFront} />
+      <div css={cardStyle(isCardFront)}>
+        <CardFace faceType="front" />
+        <CardFace faceType="back" />
       </div>
     </div>
   );
@@ -51,17 +45,18 @@ function Card({ isCardFront }: CardProps) {
 const sceneStyle = css`
   width: 280px;
   height: 431px;
-  perspective: 600px;
+  perspective: 1500px;
 `;
 
-const cardStyle = css`
+const cardStyle = (isCardFront: boolean) => css`
   position: relative;
   width: 100%;
   height: 100%;
-  transition: transform 1s;
+  transition: transform 0.8s;
   transform-style: preserve-3d;
   border-radius: 10px;
   font-size: 1.5rem;
+  transform: ${isCardFront ? 'none' : 'rotateY(180deg)'};
 `;
 
 const cardFaceStyle = css`
@@ -74,14 +69,13 @@ const cardFaceStyle = css`
   padding: 30px 25px;
 `;
 
-const frontStyle = (isCardFront: boolean) => css`
+const frontStyle = css`
   background-color: #de5246;
-  ${!isCardFront && 'transform: rotateY(180deg)'};
 `;
 
-const backStyle = (isCardFront: boolean) => css`
+const backStyle = css`
   background-color: royalblue;
-  ${isCardFront && 'transform: rotateY(180deg)'};
+  transform: rotateY(180deg);
 `;
 
 /* about texts */
