@@ -10,7 +10,7 @@ interface TextAreaProps {
   onChange: React.ChangeEventHandler<HTMLTextAreaElement>;
 }
 
-function TextArea({ name, labelName, rows, cols }: TextAreaProps) {
+function TextArea({ name, labelName, rows, cols, onChange }: TextAreaProps) {
   return (
     <div>
       <Label name={name} labelName={labelName} />
@@ -19,6 +19,7 @@ function TextArea({ name, labelName, rows, cols }: TextAreaProps) {
         name={name}
         rows={rows}
         cols={cols}
+        onChange={onChange}
         css={[inputStyle, textAreaStyle]}
       />
     </div>

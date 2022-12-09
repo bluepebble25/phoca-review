@@ -1,9 +1,10 @@
 import { css } from '@emotion/react';
 import React, { useState } from 'react';
+import FlipButton from '../components/atoms/Buttons/FlipButton';
+import Card from '../components/atoms/Card';
+import CardFlipLabel from '../components/atoms/CardFlipLabel';
 import Input from '../components/atoms/Input/Input';
 import TextArea from '../components/atoms/Input/TextArea';
-// import Input from '../components/atoms/Input/Input';
-// import TextArea from '../components/atoms/Input/TextArea';
 import Logo from '../components/atoms/Logo';
 
 function CreateCardPage() {
@@ -25,12 +26,36 @@ function CreateCardPage() {
     console.log(cardContents);
   };
 
+  const onClickCardToggle = (e: React.MouseEvent) => {
+    switch (e.currentTarget.id) {
+      case 'frontLabel':
+        setIsCardFront(true);
+        break;
+      case 'backLabel':
+        setIsCardFront(false);
+        break;
+      default:
+        setIsCardFront(!isCardFront);
+    }
+  };
+
   return (
     <div css={backgroundStyle}>
       <div css={containerStyle}>
         <Logo margin="36px" />
         <div css={innerStyle}>
-          <div css={cardContainerStyle}></div>
+          <div css={cardPreviewStyle}>
+            <Card isCardFront={isCardFront} />
+            <div css={flipTooAreaStyle}>
+              <CardFlipLabel
+                isCardFront={isCardFront}
+                onClick={onClickCardToggle}
+              />
+              <div css={buttonWrapperStyle}>
+                <FlipButton buttonSize={28} onClick={onClickCardToggle} />
+              </div>
+            </div>
+          </div>
           <form css={formStyle}>
             {isCardFront ? (
               <>
@@ -69,7 +94,6 @@ function CreateCardPage() {
 }
 
 const backgroundStyle = css`
-  height: 100vh;
   background-color: #a0ddff;
 `;
 
@@ -87,15 +111,28 @@ const innerStyle = css`
   margin: 30px auto;
 `;
 
-const cardContainerStyle = css`
-  width: 50%;
+const cardPreviewStyle = css`
+  width: 48%;
+`;
+
+const flipTooAreaStyle = css`
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const buttonWrapperStyle = css`
+  position: absolute;
+  top: -5px;
+  right: 18px;
 `;
 
 const formStyle = css`
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  width: 50%;
+  gap: 4%;
+  width: 48%;
 `;
 
 export default CreateCardPage;
