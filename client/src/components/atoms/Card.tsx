@@ -52,11 +52,11 @@ const cardStyle = (isCardFront: boolean) => css`
   position: relative;
   width: 100%;
   height: 100%;
-  transition: transform 0.8s;
+  transition: transform 0.5s;
   transform-style: preserve-3d;
   border-radius: 10px;
   font-size: 1.5rem;
-  transform: ${isCardFront ? 'none' : 'rotateY(180deg)'};
+  transform: ${isCardFront ? 'none' : 'rotateY(-180deg)'};
 `;
 
 const cardFaceStyle = css`

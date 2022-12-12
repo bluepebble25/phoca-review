@@ -12,7 +12,10 @@ function CreateCardPage() {
     title: '',
     author: '',
   });
-  const [cardContents, setCardContents] = useState({ front: '', back: '' });
+  const [cardContents, setCardContents] = useState({
+    contentsFront: '',
+    contentsBack: '',
+  });
   const [isCardFront, setIsCardFront] = useState(true);
 
   const onChangeCardInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +26,6 @@ function CreateCardPage() {
   const onChangeContents = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setCardContents({ ...cardContents, [name]: value });
-    console.log(cardContents);
   };
 
   const onClickCardToggle = (e: React.MouseEvent) => {
