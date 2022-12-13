@@ -1,41 +1,71 @@
 import { css } from '@emotion/react';
 
 interface CardProps {
+  cardInfo: {
+    title: string;
+    author: string;
+  };
+  cardContents: {
+    contentsFront: string;
+    contentsBack: string;
+  };
   isCardFront: boolean;
 }
 
 interface CardFaceProps {
   faceType: 'front' | 'back';
+  cardInfo: {
+    title: string;
+    author: string;
+  };
+  cardContents: string;
 }
 
-const CardFace: React.FC<CardFaceProps> = ({ faceType }) => {
+const CardFace: React.FC<CardFaceProps> = ({
+  faceType,
+  cardInfo,
+  cardContents,
+}) => {
   return (
     <div css={[cardFaceStyle, faceType === 'front' ? frontStyle : backStyle]}>
       <div css={titleStyle}>
         {/* 36자 제한 */}
-        제목을 입력 해주세요 제목을 입력해주세요 제목을 입력해주세요 제목
+        {/* 제목을 입력 해주세요 제목을 입력해주세요 제목을 입력해주세요 제목 */}
+        {cardInfo.title}
       </div>
       <p css={contentsStyle}>
         {/* 198자 제한 */}
-        국회는 국가의 예산안을 심의·확정한다. 각급 선거관리위원회의
+        {/* 국회는 국가의 예산안을 심의·확정한다. 각급 선거관리위원회의
         조직·직무범위 기타 필요한 사항은 법률로 정한다. 군인 또는 군무원이 아닌
         국민은 대한민국의 영역안에서는 중대한 군사상
         기밀·초병·초소·유독음식물공급·포로·군용물에 관한 죄중 법률이 정한 경우와
         비상계엄이 선포된 경우를 제외하고는 군사법원의 재판을 받지 아니한다.
-        재판의 전심절차로서 행정심판을
+        재판의 전심절차로서 행정심판을 */}
+        {cardContents}
       </p>
       {/* 17자 제한 */}
-      <div css={authorStyle}>작가 감독을 입력 해주세요 안녕</div>
+      <div css={authorStyle}>
+        {/* 작가 감독을 입력 해주세요 안녕 */}
+        {cardInfo.author}
+      </div>
     </div>
   );
 };
 
-function Card({ isCardFront }: CardProps) {
+function Card({ cardInfo, cardContents, isCardFront }: CardProps) {
   return (
     <div css={sceneStyle}>
       <div css={cardStyle(isCardFront)}>
-        <CardFace faceType="front" />
-        <CardFace faceType="back" />
+        <CardFace
+          faceType="front"
+          cardInfo={cardInfo}
+          cardContents={cardContents.contentsFront}
+        />
+        <CardFace
+          faceType="back"
+          cardInfo={cardInfo}
+          cardContents={cardContents.contentsBack}
+        />
       </div>
     </div>
   );

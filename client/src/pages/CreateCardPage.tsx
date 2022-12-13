@@ -19,8 +19,6 @@ function CreateCardPage() {
   });
   const [isCardFront, setIsCardFront] = useState(true);
 
-  const bgColor = ['red'];
-
   const onChangeCardInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setCardInfo({ ...cardInfo, [name]: value });
@@ -50,7 +48,11 @@ function CreateCardPage() {
         <Logo margin="36px" />
         <div css={innerStyle}>
           <div css={cardPreviewStyle}>
-            <Card isCardFront={isCardFront} />
+            <Card
+              isCardFront={isCardFront}
+              cardInfo={cardInfo}
+              cardContents={cardContents}
+            />
             <div css={flipTooAreaStyle}>
               <CardFlipLabel
                 isCardFront={isCardFront}
@@ -68,10 +70,12 @@ function CreateCardPage() {
                   name="title"
                   labelName="제목"
                   onChange={onChangeCardInfo}
+                  value={cardInfo.title}
                 />
                 <Input
                   name="author"
                   labelName="작가/감독"
+                  value={cardInfo.author}
                   onChange={onChangeCardInfo}
                 />
                 <TextArea
@@ -79,6 +83,7 @@ function CreateCardPage() {
                   labelName="내용"
                   rows={10}
                   cols={40}
+                  value={cardContents.contentsFront}
                   onChange={onChangeContents}
                 />
               </div>
@@ -88,6 +93,7 @@ function CreateCardPage() {
                 labelName="내용"
                 rows={10}
                 cols={40}
+                value={cardContents.contentsBack}
                 onChange={onChangeContents}
               />
             )}

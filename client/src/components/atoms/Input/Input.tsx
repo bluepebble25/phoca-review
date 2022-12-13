@@ -4,10 +4,11 @@ import Label from '../Label';
 interface InputProps {
   name: string;
   labelName: string;
+  value: string;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-function Input({ name, labelName, onChange }: InputProps) {
+function Input({ name, labelName, value, onChange }: InputProps) {
   return (
     <div>
       <Label name={labelName} labelName={labelName} />
@@ -17,6 +18,7 @@ function Input({ name, labelName, onChange }: InputProps) {
         name={name}
         onChange={onChange}
         css={inputStyle}
+        value={value}
       />
     </div>
   );
