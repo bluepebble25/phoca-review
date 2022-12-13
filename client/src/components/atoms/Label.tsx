@@ -13,7 +13,7 @@ function Label({ name, labelName }: LabelProps) {
   );
 }
 
-const labelStyle = css`
+export const labelStyle = css`
   font-size: 1.5rem;
   display: block;
   margin-bottom: 12px;

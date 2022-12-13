@@ -6,6 +6,7 @@ import CardFlipLabel from '../components/atoms/CardFlipLabel';
 import Input from '../components/atoms/Input/Input';
 import TextArea from '../components/atoms/Input/TextArea';
 import Logo from '../components/atoms/Logo';
+import CardOptionList from '../components/organisms/CardOptionList';
 
 function CreateCardPage() {
   const [cardInfo, setCardInfo] = useState({
@@ -17,6 +18,8 @@ function CreateCardPage() {
     contentsBack: '',
   });
   const [isCardFront, setIsCardFront] = useState(true);
+
+  const bgColor = ['red'];
 
   const onChangeCardInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -60,7 +63,7 @@ function CreateCardPage() {
           </div>
           <form css={formStyle}>
             {isCardFront ? (
-              <>
+              <div css={inputAreaStyle}>
                 <Input
                   name="title"
                   labelName="제목"
@@ -78,7 +81,7 @@ function CreateCardPage() {
                   cols={40}
                   onChange={onChangeContents}
                 />
-              </>
+              </div>
             ) : (
               <TextArea
                 name="contentsBack"
@@ -88,6 +91,8 @@ function CreateCardPage() {
                 onChange={onChangeContents}
               />
             )}
+
+            <CardOptionList />
           </form>
         </div>
       </div>
@@ -135,6 +140,13 @@ const formStyle = css`
   flex-direction: column;
   gap: 4%;
   width: 48%;
+`;
+
+const inputAreaStyle = css`
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 17px;
 `;
 
 export default CreateCardPage;
