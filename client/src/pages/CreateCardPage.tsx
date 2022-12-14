@@ -1,14 +1,13 @@
 import { css } from '@emotion/react';
 import React, { useState } from 'react';
-import FlipButton from '../components/atoms/Buttons/FlipButton';
-import Card from '../components/atoms/Card';
-import CardFlipLabel from '../components/atoms/CardFlipLabel';
 import Input from '../components/atoms/Input/Input';
 import TextArea from '../components/atoms/Input/TextArea';
 import Logo from '../components/atoms/Logo';
+import CardPreview from '../components/molecules/CardPreview';
 import CardOptionList from '../components/organisms/CardOptionList';
 
 function CreateCardPage() {
+  const [isCardFront, setIsCardFront] = useState(true);
   const [cardInfo, setCardInfo] = useState({
     title: '',
     author: '',
@@ -17,7 +16,6 @@ function CreateCardPage() {
     contentsFront: '',
     contentsBack: '',
   });
-  const [isCardFront, setIsCardFront] = useState(true);
 
   const onChangeCardInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -47,22 +45,12 @@ function CreateCardPage() {
       <div css={containerStyle}>
         <Logo margin="36px" />
         <div css={innerStyle}>
-          <div css={cardPreviewStyle}>
-            <Card
-              isCardFront={isCardFront}
-              cardInfo={cardInfo}
-              cardContents={cardContents}
-            />
-            <div css={flipTooAreaStyle}>
-              <CardFlipLabel
-                isCardFront={isCardFront}
-                onClick={onClickCardToggle}
-              />
-              <div css={buttonWrapperStyle}>
-                <FlipButton buttonSize={28} onClick={onClickCardToggle} />
-              </div>
-            </div>
-          </div>
+          <CardPreview
+            cardInfo={cardInfo}
+            cardContents={cardContents}
+            isCardFront={isCardFront}
+            onClickCardToggle={onClickCardToggle}
+          />
           <form css={formStyle}>
             {isCardFront ? (
               <div css={inputAreaStyle}>
@@ -88,14 +76,16 @@ function CreateCardPage() {
                 />
               </div>
             ) : (
-              <TextArea
-                name="contentsBack"
-                labelName="내용"
-                rows={10}
-                cols={40}
-                value={cardContents.contentsBack}
-                onChange={onChangeContents}
-              />
+              <div css={inputAreaStyle}>
+                <TextArea
+                  name="contentsBack"
+                  labelName="내용"
+                  rows={10}
+                  cols={40}
+                  value={cardContents.contentsBack}
+                  onChange={onChangeContents}
+                />
+              </div>
             )}
 
             <CardOptionList />
@@ -122,23 +112,6 @@ const innerStyle = css`
   justify-content: space-between;
   width: 700px;
   margin: 30px auto;
-`;
-
-const cardPreviewStyle = css`
-  width: 48%;
-`;
-
-const flipTooAreaStyle = css`
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-`;
-
-const buttonWrapperStyle = css`
-  position: absolute;
-  top: -5px;
-  right: 18px;
 `;
 
 const formStyle = css`

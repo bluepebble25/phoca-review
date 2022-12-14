@@ -4,9 +4,10 @@ import { colorPalette } from '../../_lib/styles/colorPalette';
 interface ColorChipProps {
   filling: string;
   borderExists: boolean;
+  floatImage?: string;
 }
 
-function ColorChip({ filling, borderExists }: ColorChipProps) {
+function ColorChip({ filling, borderExists, floatImage }: ColorChipProps) {
   let color = null;
   let image = null;
   let gradient = null;
@@ -17,8 +18,15 @@ function ColorChip({ filling, borderExists }: ColorChipProps) {
   } else {
     image = filling;
   }
-  console.log(filling);
-  return <div css={colorChipStyle(color, image, gradient, borderExists)}></div>;
+
+  return (
+    <button
+      type="button"
+      css={colorChipStyle(color, image, gradient, borderExists)}
+    >
+      {floatImage && <img src={floatImage} alt="" css={imageStyle} />}
+    </button>
+  );
 }
 
 const colorChipStyle = (
@@ -27,6 +35,10 @@ const colorChipStyle = (
   gradient: string | null,
   borderExists: boolean
 ) => css`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 34px;
   height: 34px;
   background-color: ${colorPalette.base};
@@ -38,9 +50,15 @@ const colorChipStyle = (
   background-size: cover;
   ${gradient && 'background:' + gradient + ';'}
 
-  ${borderExists && 'border: 2px solid black;'}
+  ${borderExists ? 'border: 2px solid black;' : 'border: none;'}
   border-radius: 6px;
   cursor: pointer;
+`;
+
+const imageStyle = css`
+  position: absolute;
+  width: 22px;
+  height: 22px;
 `;
 
 export default ColorChip;
