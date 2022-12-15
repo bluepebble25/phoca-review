@@ -8,6 +8,7 @@ interface CardOptionProps {
   fillingList: Array<string>;
   imageList?: Array<string> | undefined;
   type: 'color' | 'gradient' | 'font';
+  onClickColorChip: React.MouseEventHandler;
 }
 
 function CardOptionItem({
@@ -15,13 +16,14 @@ function CardOptionItem({
   fillingList,
   imageList,
   type,
+  onClickColorChip,
 }: CardOptionProps) {
   return (
     <div css={optionItemStyle}>
       <div css={labelStyle}>
         <strong>{optionName}</strong>
       </div>
-      <div css={chipsStyle}>
+      <div css={chipsStyle} id={type} onClick={onClickColorChip}>
         {fillingList.map((filling, i) => {
           let colorName;
           if (type === 'color' || type === 'font') {

@@ -16,6 +16,7 @@ function CreateCardPage() {
     contentsFront: '',
     contentsBack: '',
   });
+  const [cardBg, setCardBg] = useState({ type: '', value: '' });
 
   const onChangeCardInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -37,6 +38,23 @@ function CreateCardPage() {
         break;
       default:
         setIsCardFront(!isCardFront);
+    }
+  };
+
+  const onClickColorChip = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if ((e.target as HTMLButtonElement).tagName === 'BUTTON') {
+      const type = e.currentTarget.id;
+      setCardBg({ type: type, value: (e.target as HTMLButtonElement).value });
+    }
+    if ((e.target as HTMLElement).tagName === 'IMG') {
+      let parentTag = e.target as HTMLElement;
+      while (parentTag.tagName !== 'BUTTON') {
+        if (parentTag.parentElement) {
+          parentTag = parentTag.parentElement;
+        }
+      }
+      const type = e.currentTarget.id;
+      setCardBg({ type: type, value: (parentTag as HTMLButtonElement).value });
     }
   };
 
@@ -88,7 +106,7 @@ function CreateCardPage() {
               </div>
             )}
 
-            <CardOptionList />
+            <CardOptionList onClickColorChip={onClickColorChip} />
           </form>
         </div>
       </div>
