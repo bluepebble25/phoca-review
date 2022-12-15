@@ -29,12 +29,18 @@ function CardOptions() {
 
   return (
     <div css={ItemContainer}>
-      <CardOptionItem optionName="단색 배경" fillingList={colorList} />
       <CardOptionItem
+        optionName="단색 배경"
+        type={'color'}
+        fillingList={colorList}
+      />
+      <CardOptionItem
+        type={'gradient'}
         optionName="그라데이션/이미지 배경"
         fillingList={gradientList}
       />
       <CardOptionItem
+        type={'font'}
         optionName="텍스트 색상"
         fillingList={fontColor}
         imageList={fontImageList}

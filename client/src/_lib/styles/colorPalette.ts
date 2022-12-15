@@ -1,4 +1,12 @@
-const colorPalette = {
+interface colorPaletteProps {
+  [key: string]: string;
+}
+
+interface gradientProps {
+  [key: string]: string;
+}
+
+const colorPalette: colorPaletteProps = {
   white: '#FFFFFF',
   black: '#000000',
   base: '#D9D9D9',
@@ -8,7 +16,7 @@ const colorPalette = {
   yellow: '#FFD749',
 };
 
-const gradient = {
+const gradient: gradientProps = {
   aurora: 'linear-gradient(to left top, #CB5EEE, #4BE1EC)',
   unripeMango: 'linear-gradient(to left top, #33CC99, #FFCC33)',
   sunrise: 'linear-gradient(to left top, #12C2E9, #C471ED, #FF8235)',

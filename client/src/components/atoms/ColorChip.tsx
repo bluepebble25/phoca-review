@@ -3,11 +3,17 @@ import { colorPalette } from '../../_lib/styles/colorPalette';
 
 interface ColorChipProps {
   filling: string;
+  colorName: string | undefined;
   borderExists: boolean;
   floatImage?: string;
 }
 
-function ColorChip({ filling, borderExists, floatImage }: ColorChipProps) {
+function ColorChip({
+  filling,
+  colorName,
+  borderExists,
+  floatImage,
+}: ColorChipProps) {
   let color = null;
   let image = null;
   let gradient = null;
@@ -22,6 +28,7 @@ function ColorChip({ filling, borderExists, floatImage }: ColorChipProps) {
   return (
     <button
       type="button"
+      value={colorName ? colorName : 'image'}
       css={colorChipStyle(color, image, gradient, borderExists)}
     >
       {floatImage && <img src={floatImage} alt="" css={imageStyle} />}
