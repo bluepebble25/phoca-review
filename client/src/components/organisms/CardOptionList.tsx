@@ -7,10 +7,11 @@ import { css } from '@emotion/react';
 import React from 'react';
 
 interface CardOptionsProps {
+  inputColorRef: React.Ref<HTMLInputElement>;
   onClickColorChip: React.MouseEventHandler;
 }
 
-function CardOptions({ onClickColorChip }: CardOptionsProps) {
+function CardOptions({ inputColorRef, onClickColorChip }: CardOptionsProps) {
   const colorList = [
     colorPalette.white,
     colorPalette.black,
@@ -35,6 +36,7 @@ function CardOptions({ onClickColorChip }: CardOptionsProps) {
   return (
     <div css={ItemContainer}>
       <CardOptionItem
+        inputColorRef={inputColorRef}
         optionName="단색 배경"
         type={'color'}
         fillingList={colorList}

@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Input from '../components/atoms/Input/Input';
 import TextArea from '../components/atoms/Input/TextArea';
 import Logo from '../components/atoms/Logo';
@@ -17,6 +17,8 @@ function CreateCardPage() {
     contentsBack: '',
   });
   const [cardBg, setCardBg] = useState({ type: '', value: '' });
+
+  const inputColorRef = useRef<HTMLInputElement>(null);
 
   const onChangeCardInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -47,6 +49,7 @@ function CreateCardPage() {
       setCardBg({ type: type, value: (e.target as HTMLButtonElement).value });
     }
     if ((e.target as HTMLElement).tagName === 'IMG') {
+      // font 색 선택 버튼처럼 내부에 이미지가 있는 경우
       let parentTag = e.target as HTMLElement;
       while (parentTag.tagName !== 'BUTTON') {
         if (parentTag.parentElement) {
@@ -55,6 +58,12 @@ function CreateCardPage() {
       }
       const type = e.currentTarget.id;
       setCardBg({ type: type, value: (parentTag as HTMLButtonElement).value });
+    }
+
+    if ((e.target as HTMLButtonElement).value === 'colorPicker') {
+      if (inputColorRef.current) {
+        inputColorRef.current.click();
+      }
     }
   };
 
@@ -106,7 +115,10 @@ function CreateCardPage() {
               </div>
             )}
 
-            <CardOptionList onClickColorChip={onClickColorChip} />
+            <CardOptionList
+              inputColorRef={inputColorRef}
+              onClickColorChip={onClickColorChip}
+            />
           </form>
         </div>
       </div>

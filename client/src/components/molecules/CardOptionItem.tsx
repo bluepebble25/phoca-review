@@ -3,7 +3,8 @@ import { colorPalette, gradient } from '../../_lib/styles/colorPalette';
 import ColorChip from '../atoms/ColorChip';
 import { labelStyle } from '../atoms/Label';
 
-interface CardOptionProps {
+interface CardOptionItemProps {
+  inputColorRef?: React.Ref<HTMLInputElement>;
   optionName: string;
   fillingList: Array<string>;
   imageList?: Array<string> | undefined;
@@ -12,14 +13,15 @@ interface CardOptionProps {
 }
 
 function CardOptionItem({
+  inputColorRef,
   optionName,
   fillingList,
   imageList,
   type,
   onClickColorChip,
-}: CardOptionProps) {
+}: CardOptionItemProps) {
   return (
-    <div css={optionItemStyle}>
+    <div>
       <div css={labelStyle}>
         <strong>{optionName}</strong>
       </div>
@@ -39,6 +41,7 @@ function CardOptionItem({
           return (
             <ColorChip
               key={filling}
+              type={type}
               filling={filling}
               colorName={colorName}
               {...(filling === '#FFFFFF'
@@ -48,6 +51,10 @@ function CardOptionItem({
             />
           );
         })}
+
+        {type === 'color' && (
+          <input type="color" ref={inputColorRef} css={colorPickerStyle} />
+        )}
       </div>
     </div>
   );
@@ -56,8 +63,18 @@ function CardOptionItem({
 const optionItemStyle = css``;
 
 const chipsStyle = css`
+  position: relative;
   display: flex;
   gap: 12px;
+`;
+
+const colorPickerStyle = css`
+  position: absolute;
+  visibility: hidden;
+  right: 27px;
+
+  width: 34px;
+  height: 34px;
 `;
 
 export default CardOptionItem;

@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import { colorPalette } from '../../_lib/styles/colorPalette';
 
 interface ColorChipProps {
+  type: string;
   filling: string;
   colorName: string | undefined;
   borderExists: boolean;
@@ -9,6 +10,7 @@ interface ColorChipProps {
 }
 
 function ColorChip({
+  type,
   filling,
   colorName,
   borderExists,
@@ -28,7 +30,7 @@ function ColorChip({
   return (
     <button
       type="button"
-      value={colorName ? colorName : 'image'}
+      value={colorName ? colorName : type === 'color' ? 'colorPicker' : 'image'}
       css={colorChipStyle(color, image, gradient, borderExists)}
     >
       {floatImage && <img src={floatImage} alt="" css={imageStyle} />}
