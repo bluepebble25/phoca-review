@@ -28,7 +28,7 @@ function CardOptionItem({
       <div css={chipsStyle} id={type} onClick={onClickColorChip}>
         {fillingList.map((filling, i) => {
           let colorName;
-          if (type === 'color' || type === 'font') {
+          if (type === 'color') {
             colorName = Object.keys(colorPalette).find(
               (key) => colorPalette[key] === filling
             );
@@ -36,6 +36,8 @@ function CardOptionItem({
             colorName = Object.keys(gradient).find(
               (key) => gradient[key] === filling
             );
+          } else if (type === 'font') {
+            colorName = filling === '#FFFFFF' ? 'black' : 'white';
           }
 
           return (

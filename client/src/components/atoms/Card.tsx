@@ -1,6 +1,15 @@
 import { css } from '@emotion/react';
+import { colorPalette, gradient } from '../../_lib/styles/colorPalette';
+
+interface CardCustomType {
+  type: string;
+  value: string;
+  fontColor: string;
+}
 
 interface CardProps {
+  cardCustomFront: CardCustomType;
+  cardCustomBack: CardCustomType;
   cardInfo: {
     title: string;
     author: string;
@@ -13,6 +22,8 @@ interface CardProps {
 }
 
 interface CardFaceProps {
+  cardCustomFront?: CardCustomType;
+  cardCustomBack?: CardCustomType;
   faceType: 'front' | 'back';
   cardInfo: {
     title: string;
@@ -22,12 +33,21 @@ interface CardFaceProps {
 }
 
 const CardFace: React.FC<CardFaceProps> = ({
+  cardCustomFront,
+  cardCustomBack,
   faceType,
   cardInfo,
   cardContents,
 }) => {
   return (
-    <div css={[cardFaceStyle, faceType === 'front' ? frontStyle : backStyle]}>
+    <div
+      css={[
+        cardFaceStyle,
+        faceType === 'front'
+          ? frontStyle(cardCustomFront!)
+          : backStyle(cardCustomBack!),
+      ]}
+    >
       <div css={titleStyle}>
         {/* 36자 제한 */}
         {cardInfo.title}
@@ -42,16 +62,24 @@ const CardFace: React.FC<CardFaceProps> = ({
   );
 };
 
-function Card({ cardInfo, cardContents, isCardFront }: CardProps) {
+function Card({
+  cardCustomFront,
+  cardCustomBack,
+  cardInfo,
+  cardContents,
+  isCardFront,
+}: CardProps) {
   return (
     <div css={sceneStyle}>
       <div css={cardStyle(isCardFront)}>
         <CardFace
+          cardCustomFront={cardCustomFront}
           faceType="front"
           cardInfo={cardInfo}
           cardContents={cardContents.contentsFront}
         />
         <CardFace
+          cardCustomBack={cardCustomBack}
           faceType="back"
           cardInfo={cardInfo}
           cardContents={cardContents.contentsBack}
@@ -79,23 +107,33 @@ const cardStyle = (isCardFront: boolean) => css`
   transform: ${isCardFront ? 'none' : 'rotateY(-180deg)'};
 `;
 
+interface CardCustomType {
+  type: string;
+  value: string;
+  fontColor: string;
+}
+
 const cardFaceStyle = css`
   position: absolute;
   width: 100%;
   height: 100%;
   border-radius: 10px;
-  background-color: #d9d9d9;
+  // background-color: #d9d9d9;
   backface-visibility: hidden;
   padding: 30px 25px;
 `;
 
-const frontStyle = css`
-  background-color: #de5246;
+const frontStyle = ({ type, value, fontColor }: CardCustomType) => css`
+  background-color: ${type === 'color' ? colorPalette[value] : '#FFFFFF'};
+  background: ${type === 'gradient' && gradient[value]};
+  color: ${fontColor ? colorPalette[fontColor] : '#000000'};
 `;
 
-const backStyle = css`
-  background-color: royalblue;
+const backStyle = ({ type, value, fontColor }: CardCustomType) => css`
+  background-color: ${type === 'color' ? colorPalette[value] : '#FFFFFF'};
   transform: rotateY(180deg);
+  background: ${type === 'gradient' && gradient[value]};
+  color: ${fontColor ? colorPalette[fontColor] : '#000000'};
 `;
 
 /* about texts */

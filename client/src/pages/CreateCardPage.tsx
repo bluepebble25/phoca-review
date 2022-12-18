@@ -5,6 +5,7 @@ import TextArea from '../components/atoms/Input/TextArea';
 import Logo from '../components/atoms/Logo';
 import CardPreview from '../components/molecules/CardPreview';
 import CardOptionList from '../components/organisms/CardOptionList';
+import { colorPalette } from '../_lib/styles/colorPalette';
 
 function CreateCardPage() {
   const [isCardFront, setIsCardFront] = useState(true);
@@ -16,7 +17,18 @@ function CreateCardPage() {
     contentsFront: '',
     contentsBack: '',
   });
-  const [cardBg, setCardBg] = useState({ type: '', value: '' });
+  const [cardCustomFront, setCardCustomFront] = useState({
+    type: 'color',
+    value: colorPalette.white,
+    fontColor: 'black',
+  });
+  const [cardCustomBack, setCardCustomBack] = useState({
+    type: 'color',
+    value: colorPalette.white,
+    fontColor: 'black',
+  });
+
+  console.log(cardCustomFront, cardCustomBack);
 
   const inputColorRef = useRef<HTMLInputElement>(null);
 
@@ -44,10 +56,37 @@ function CreateCardPage() {
   };
 
   const onClickColorChip = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if ((e.target as HTMLButtonElement).tagName === 'BUTTON') {
+    const target = e.target as HTMLButtonElement;
+    if (target.tagName === 'BUTTON') {
       const type = e.currentTarget.id;
-      setCardBg({ type: type, value: (e.target as HTMLButtonElement).value });
+      if (type === 'font') {
+        isCardFront
+          ? setCardCustomFront({
+              ...cardCustomFront,
+              fontColor: target.value,
+            })
+          : setCardCustomBack({
+              ...cardCustomBack,
+              fontColor: target.value,
+            });
+      } else if (
+        (type === 'color' && target.value !== 'colorPicker') ||
+        type === 'gradient'
+      ) {
+        isCardFront
+          ? setCardCustomFront({
+              ...cardCustomFront,
+              type: type,
+              value: target.value,
+            })
+          : setCardCustomBack({
+              ...cardCustomBack,
+              type: type,
+              value: target.value,
+            });
+      }
     }
+
     if ((e.target as HTMLElement).tagName === 'IMG') {
       // font 색 선택 버튼처럼 내부에 이미지가 있는 경우
       let parentTag = e.target as HTMLElement;
@@ -57,7 +96,17 @@ function CreateCardPage() {
         }
       }
       const type = e.currentTarget.id;
-      setCardBg({ type: type, value: (parentTag as HTMLButtonElement).value });
+      if (type === 'font') {
+        isCardFront
+          ? setCardCustomFront({
+              ...cardCustomFront,
+              fontColor: (parentTag as HTMLButtonElement).value,
+            })
+          : setCardCustomBack({
+              ...cardCustomBack,
+              fontColor: (parentTag as HTMLButtonElement).value,
+            });
+      }
     }
 
     if ((e.target as HTMLButtonElement).value === 'colorPicker') {
@@ -73,6 +122,8 @@ function CreateCardPage() {
         <Logo margin="36px" />
         <div css={innerStyle}>
           <CardPreview
+            cardCustomFront={cardCustomFront}
+            cardCustomBack={cardCustomBack}
             cardInfo={cardInfo}
             cardContents={cardContents}
             isCardFront={isCardFront}

@@ -4,7 +4,15 @@ import FlipButton from '../atoms/Buttons/FlipButton';
 import Card from '../atoms/Card';
 import CardFlipLabel from '../atoms/CardFlipLabel';
 
+interface CardCustomType {
+  type: string;
+  value: string;
+  fontColor: string;
+}
+
 interface CardPreviewProps {
+  cardCustomFront: CardCustomType;
+  cardCustomBack: CardCustomType;
   cardInfo: {
     title: string;
     author: string;
@@ -18,6 +26,8 @@ interface CardPreviewProps {
 }
 
 function CardPreview({
+  cardCustomFront,
+  cardCustomBack,
   cardInfo,
   cardContents,
   isCardFront,
@@ -26,6 +36,8 @@ function CardPreview({
   return (
     <div css={cardPreviewStyle}>
       <Card
+        cardCustomFront={cardCustomFront}
+        cardCustomBack={cardCustomBack}
         isCardFront={isCardFront}
         cardInfo={cardInfo}
         cardContents={cardContents}
