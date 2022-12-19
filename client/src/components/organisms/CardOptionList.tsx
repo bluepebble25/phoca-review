@@ -9,9 +9,14 @@ import React from 'react';
 interface CardOptionsProps {
   inputColorRef: React.Ref<HTMLInputElement>;
   onClickColorChip: React.MouseEventHandler;
+  onChangeColorPicker: React.ChangeEventHandler;
 }
 
-function CardOptions({ inputColorRef, onClickColorChip }: CardOptionsProps) {
+function CardOptions({
+  inputColorRef,
+  onClickColorChip,
+  onChangeColorPicker,
+}: CardOptionsProps) {
   const colorList = [
     colorPalette.white,
     colorPalette.black,
@@ -41,6 +46,7 @@ function CardOptions({ inputColorRef, onClickColorChip }: CardOptionsProps) {
         type={'color'}
         fillingList={colorList}
         onClickColorChip={onClickColorChip}
+        onChangeColorPicker={onChangeColorPicker}
       />
       <CardOptionItem
         type={'gradient'}

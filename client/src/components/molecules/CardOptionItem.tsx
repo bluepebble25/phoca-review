@@ -10,6 +10,7 @@ interface CardOptionItemProps {
   imageList?: Array<string> | undefined;
   type: 'color' | 'gradient' | 'font';
   onClickColorChip: React.MouseEventHandler;
+  onChangeColorPicker?: React.ChangeEventHandler;
 }
 
 function CardOptionItem({
@@ -19,6 +20,7 @@ function CardOptionItem({
   imageList,
   type,
   onClickColorChip,
+  onChangeColorPicker,
 }: CardOptionItemProps) {
   return (
     <div>
@@ -55,14 +57,17 @@ function CardOptionItem({
         })}
 
         {type === 'color' && (
-          <input type="color" ref={inputColorRef} css={colorPickerStyle} />
+          <input
+            type="color"
+            ref={inputColorRef}
+            css={colorPickerStyle}
+            onChange={onChangeColorPicker}
+          />
         )}
       </div>
     </div>
   );
 }
-
-const optionItemStyle = css``;
 
 const chipsStyle = css`
   position: relative;

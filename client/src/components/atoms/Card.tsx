@@ -124,13 +124,21 @@ const cardFaceStyle = css`
 `;
 
 const frontStyle = ({ type, value, fontColor }: CardCustomType) => css`
-  background-color: ${type === 'color' ? colorPalette[value] : '#FFFFFF'};
+  background-color: ${type === 'color'
+    ? value.split('')[0] === '#'
+      ? value
+      : colorPalette[value]
+    : '#FFFFFF'};
   background: ${type === 'gradient' && gradient[value]};
   color: ${fontColor ? colorPalette[fontColor] : '#000000'};
 `;
 
 const backStyle = ({ type, value, fontColor }: CardCustomType) => css`
-  background-color: ${type === 'color' ? colorPalette[value] : '#FFFFFF'};
+  background-color: ${type === 'color'
+    ? value.split('')[0] === '#'
+      ? value
+      : colorPalette[value]
+    : '#FFFFFF'};
   transform: rotateY(180deg);
   background: ${type === 'gradient' && gradient[value]};
   color: ${fontColor ? colorPalette[fontColor] : '#000000'};

@@ -28,8 +28,6 @@ function CreateCardPage() {
     fontColor: 'black',
   });
 
-  console.log(cardCustomFront, cardCustomBack);
-
   const inputColorRef = useRef<HTMLInputElement>(null);
 
   const onChangeCardInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,6 +114,23 @@ function CreateCardPage() {
     }
   };
 
+  const onChangeColorPicker = (
+    isCardFront: boolean,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    isCardFront
+      ? setCardCustomFront({
+          ...cardCustomFront,
+          type: 'color',
+          value: e.target.value,
+        })
+      : setCardCustomBack({
+          ...cardCustomFront,
+          type: 'color',
+          value: e.target.value,
+        });
+  };
+
   return (
     <div css={backgroundStyle}>
       <div css={containerStyle}>
@@ -169,6 +184,9 @@ function CreateCardPage() {
             <CardOptionList
               inputColorRef={inputColorRef}
               onClickColorChip={onClickColorChip}
+              onChangeColorPicker={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChangeColorPicker(isCardFront, e)
+              }
             />
           </form>
         </div>
