@@ -10,12 +10,16 @@ interface CardOptionsProps {
   inputColorRef: React.Ref<HTMLInputElement>;
   onClickColorChip: React.MouseEventHandler;
   onChangeColorPicker: React.ChangeEventHandler;
+  onFileChange: React.ChangeEventHandler;
+  isCardFront: boolean;
 }
 
 function CardOptions({
   inputColorRef,
   onClickColorChip,
   onChangeColorPicker,
+  onFileChange,
+  isCardFront,
 }: CardOptionsProps) {
   const colorList = [
     colorPalette.white,
@@ -47,12 +51,15 @@ function CardOptions({
         fillingList={colorList}
         onClickColorChip={onClickColorChip}
         onChangeColorPicker={onChangeColorPicker}
+        isCardFront={isCardFront}
       />
       <CardOptionItem
         type={'gradient'}
         optionName="그라데이션/이미지 배경"
         fillingList={gradientList}
         onClickColorChip={onClickColorChip}
+        onFileChange={onFileChange}
+        isCardFront={isCardFront}
       />
       <CardOptionItem
         type={'font'}

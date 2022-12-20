@@ -69,6 +69,8 @@ function Card({
   cardContents,
   isCardFront,
 }: CardProps) {
+  console.log('카드', cardCustomFront);
+
   return (
     <div css={sceneStyle}>
       <div css={cardStyle(isCardFront)}>
@@ -131,6 +133,10 @@ const frontStyle = ({ type, value, fontColor }: CardCustomType) => css`
     : '#FFFFFF'};
   background: ${type === 'gradient' && gradient[value]};
   color: ${fontColor ? colorPalette[fontColor] : '#000000'};
+  ${type === 'image' && 'background-image: url("' + value + '")'};
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 `;
 
 const backStyle = ({ type, value, fontColor }: CardCustomType) => css`
@@ -142,6 +148,10 @@ const backStyle = ({ type, value, fontColor }: CardCustomType) => css`
   transform: rotateY(180deg);
   background: ${type === 'gradient' && gradient[value]};
   color: ${fontColor ? colorPalette[fontColor] : '#000000'};
+  ${type === 'image' && 'background-image: url("' + value + '")'};
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 `;
 
 /* about texts */

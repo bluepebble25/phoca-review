@@ -27,11 +27,10 @@ function TextArea({
         name={name}
         rows={rows}
         cols={cols}
+        value={value}
         onChange={onChange}
         css={[inputStyle, textAreaStyle]}
-      >
-        {value}
-      </textarea>
+      />
     </div>
   );
 }

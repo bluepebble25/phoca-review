@@ -1,7 +1,10 @@
+import React from 'react';
 import { css } from '@emotion/react';
 import { colorPalette, gradient } from '../../_lib/styles/colorPalette';
 import ColorChip from '../atoms/ColorChip';
 import { labelStyle } from '../atoms/Label';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faImage } from '@fortawesome/free-solid-svg-icons';
 
 interface CardOptionItemProps {
   inputColorRef?: React.Ref<HTMLInputElement>;
@@ -9,8 +12,10 @@ interface CardOptionItemProps {
   fillingList: Array<string>;
   imageList?: Array<string> | undefined;
   type: 'color' | 'gradient' | 'font';
+  isCardFront?: boolean;
   onClickColorChip: React.MouseEventHandler;
   onChangeColorPicker?: React.ChangeEventHandler;
+  onFileChange?: React.ChangeEventHandler;
 }
 
 function CardOptionItem({
@@ -19,8 +24,10 @@ function CardOptionItem({
   fillingList,
   imageList,
   type,
+  isCardFront,
   onClickColorChip,
   onChangeColorPicker,
+  onFileChange,
 }: CardOptionItemProps) {
   return (
     <div>
@@ -64,6 +71,35 @@ function CardOptionItem({
             onChange={onChangeColorPicker}
           />
         )}
+
+        {type === 'gradient' && (
+          <>
+            <div css={fileInputBoxStyle(isCardFront!)}>
+              <label htmlFor="image1" css={imageIconStyle}>
+                <FontAwesomeIcon icon={faImage} />
+              </label>
+              <input
+                id="image1"
+                type="file"
+                accept="image/*"
+                onChange={onFileChange}
+                css={fileInputStyle}
+              />
+            </div>
+            <div css={fileInputBoxStyle(!isCardFront)}>
+              <label htmlFor="image2" css={imageIconStyle}>
+                <FontAwesomeIcon icon={faImage} />
+              </label>
+              <input
+                id="image2"
+                type="file"
+                accept="image/*"
+                onChange={onFileChange}
+                css={fileInputStyle}
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
@@ -82,6 +118,23 @@ const colorPickerStyle = css`
 
   width: 34px;
   height: 34px;
+`;
+
+const fileInputBoxStyle = (isCardFront: boolean) => css`
+  display: ${isCardFront ? 'block' : 'none'};
+`;
+
+const fileInputStyle = css`
+  display: none;
+`;
+
+const imageIconStyle = css`
+  display: flex;
+  align-item: center;
+  padding-left: 3px;
+  cursor: pointer;
+  font-size: 35px;
+  color: #606470;
 `;
 
 export default CardOptionItem;

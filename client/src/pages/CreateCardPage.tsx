@@ -125,11 +125,34 @@ function CreateCardPage() {
           value: e.target.value,
         })
       : setCardCustomBack({
-          ...cardCustomFront,
+          ...cardCustomBack,
           type: 'color',
           value: e.target.value,
         });
   };
+
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    const files = target.files as FileList;
+    const filesArray = Array.from(files);
+    const selectedFiles: string[] = filesArray.map((file) => {
+      return URL.createObjectURL(file);
+    });
+    isCardFront
+      ? setCardCustomFront({
+          ...cardCustomFront,
+          type: 'image',
+          value: selectedFiles[0],
+        })
+      : setCardCustomBack({
+          ...cardCustomFront,
+          type: 'image',
+          value: selectedFiles[0],
+        });
+  };
+
+  console.log('앞면', cardCustomFront);
+  console.log('뒷면', cardCustomFront);
 
   return (
     <div css={backgroundStyle}>
@@ -187,6 +210,8 @@ function CreateCardPage() {
               onChangeColorPicker={(e: React.ChangeEvent<HTMLInputElement>) =>
                 onChangeColorPicker(isCardFront, e)
               }
+              onFileChange={onFileChange}
+              isCardFront={isCardFront}
             />
           </form>
         </div>
