@@ -6,6 +6,7 @@ import Logo from '../components/atoms/Logo';
 import CardPreview from '../components/molecules/CardPreview';
 import CardOptionList from '../components/organisms/CardOptionList';
 import { colorPalette } from '../_lib/styles/colorPalette';
+import { getTextByte } from '../_lib/utils';
 
 function CreateCardPage() {
   const [isCardFront, setIsCardFront] = useState(true);
@@ -32,12 +33,19 @@ function CreateCardPage() {
 
   const onChangeCardInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setCardInfo({ ...cardInfo, [name]: value });
+    const textByte = getTextByte(value);
+    if (name === 'title') {
+      textByte < 60 && setCardInfo({ ...cardInfo, [name]: value });
+      console.log(getTextByte(value));
+    } else if (name === 'author') {
+      textByte < 36 && setCardInfo({ ...cardInfo, [name]: value });
+    }
   };
 
   const onChangeContents = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setCardContents({ ...cardContents, [name]: value });
+    getTextByte(value) < 360 &&
+      setCardContents({ ...cardContents, [name]: value });
   };
 
   const onClickCardToggle = (e: React.MouseEvent) => {
@@ -151,9 +159,6 @@ function CreateCardPage() {
         });
   };
 
-  console.log('앞면', cardCustomFront);
-  console.log('뒷면', cardCustomFront);
-
   return (
     <div css={backgroundStyle}>
       <div css={containerStyle}>
@@ -222,10 +227,11 @@ function CreateCardPage() {
 
 const backgroundStyle = css`
   background-color: #a0ddff;
+  height: 100%;
 `;
 
 const containerStyle = css`
-  height: 100vh;
+  height: 100%;
   width: 1000px;
   margin: 0 auto;
   background-color: white;
