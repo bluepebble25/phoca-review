@@ -8,7 +8,7 @@ interface TextAreaProps {
   rows: number;
   cols: number;
   value: string;
-  onChange: React.ChangeEventHandler<HTMLTextAreaElement>;
+  onChangeContents: React.ChangeEventHandler<HTMLTextAreaElement>;
 }
 
 function TextArea({
@@ -17,7 +17,7 @@ function TextArea({
   rows,
   cols,
   value,
-  onChange,
+  onChangeContents,
 }: TextAreaProps) {
   return (
     <div>
@@ -28,7 +28,7 @@ function TextArea({
         rows={rows}
         cols={cols}
         value={value}
-        onChange={onChange}
+        onChange={onChangeContents}
         css={[inputStyle, textAreaStyle]}
       />
     </div>

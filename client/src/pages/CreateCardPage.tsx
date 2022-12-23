@@ -44,6 +44,7 @@ function CreateCardPage() {
 
   const onChangeContents = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    console.log(value.replaceAll('\n', '<br>'));
     getTextByte(value) < 360 &&
       setCardContents({ ...cardContents, [name]: value });
   };
@@ -193,7 +194,7 @@ function CreateCardPage() {
                   rows={10}
                   cols={40}
                   value={cardContents.contentsFront}
-                  onChange={onChangeContents}
+                  onChangeContents={onChangeContents}
                 />
               </div>
             ) : (
@@ -204,7 +205,7 @@ function CreateCardPage() {
                   rows={10}
                   cols={40}
                   value={cardContents.contentsBack}
-                  onChange={onChangeContents}
+                  onChangeContents={onChangeContents}
                 />
               </div>
             )}

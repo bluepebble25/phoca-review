@@ -69,8 +69,6 @@ function Card({
   cardContents,
   isCardFront,
 }: CardProps) {
-  console.log('카드', cardCustomFront);
-
   return (
     <div css={sceneStyle}>
       <div css={cardStyle(isCardFront)}>
@@ -160,6 +158,8 @@ const titleStyle = css`
 `;
 
 const contentsStyle = css`
+  white-space: pre-line;
+  word-wrap: break-word;
   font-size: 1.6rem;
 `;
 
