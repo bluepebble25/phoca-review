@@ -42,10 +42,10 @@ const CardFace: React.FC<CardFaceProps> = ({
   return (
     <div
       css={[
-        cardFaceStyle,
-        faceType === 'front'
-          ? frontStyle(cardCustomFront!)
-          : backStyle(cardCustomBack!),
+        cardFaceStyle(
+          faceType === 'front' ? cardCustomFront! : cardCustomBack!
+        ),
+        faceType === 'back' ? backStyle : {},
       ]}
     >
       <div css={titleStyle}>
@@ -113,17 +113,14 @@ interface CardCustomType {
   fontColor: string;
 }
 
-const cardFaceStyle = css`
+const cardFaceStyle = ({ type, value, fontColor }: CardCustomType) => css`
   position: absolute;
   width: 100%;
   height: 100%;
-  border-radius: 10px;
-  // background-color: #d9d9d9;
-  backface-visibility: hidden;
   padding: 30px 25px;
-`;
+  border-radius: 10px;
+  backface-visibility: hidden;
 
-const frontStyle = ({ type, value, fontColor }: CardCustomType) => css`
   background-color: ${type === 'color'
     ? value.split('')[0] === '#'
       ? value
@@ -137,27 +134,28 @@ const frontStyle = ({ type, value, fontColor }: CardCustomType) => css`
   background-position: center;
 `;
 
-const backStyle = ({ type, value, fontColor }: CardCustomType) => css`
-  background-color: ${type === 'color'
-    ? value.split('')[0] === '#'
-      ? value
-      : colorPalette[value]
-    : '#FFFFFF'};
+const backStyle = css`
   transform: rotateY(180deg);
-  background: ${type === 'gradient' && gradient[value]};
-  color: ${fontColor ? colorPalette[fontColor] : '#000000'};
-  ${type === 'image' && 'background-image: url("' + value + '")'};
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
 `;
 
 /* about texts */
 const titleStyle = css`
   margin-bottom: 23px;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  word-wrap: break-word;
 `;
 
 const contentsStyle = css`
+  display: -webkit-box;
+  -webkit-line-clamp: 13;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
   white-space: pre-line;
   word-wrap: break-word;
   font-size: 1.6rem;
@@ -169,6 +167,13 @@ const authorStyle = css`
   bottom: 30px;
   text-align: right;
   margin-top: 24px;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  word-break: break-all;
 `;
 
 export default Card;

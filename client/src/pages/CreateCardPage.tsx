@@ -36,7 +36,6 @@ function CreateCardPage() {
     const textByte = getTextByte(value);
     if (name === 'title') {
       textByte < 60 && setCardInfo({ ...cardInfo, [name]: value });
-      console.log(getTextByte(value));
     } else if (name === 'author') {
       textByte < 36 && setCardInfo({ ...cardInfo, [name]: value });
     }
@@ -44,7 +43,6 @@ function CreateCardPage() {
 
   const onChangeContents = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    console.log(value.replaceAll('\n', '<br>'));
     getTextByte(value) < 360 &&
       setCardContents({ ...cardContents, [name]: value });
   };
