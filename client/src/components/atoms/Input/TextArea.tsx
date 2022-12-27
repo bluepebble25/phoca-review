@@ -7,8 +7,10 @@ interface TextAreaProps {
   labelName: string;
   rows: number;
   cols: number;
+  maxLength: number;
   value: string;
   onChangeContents: React.ChangeEventHandler<HTMLTextAreaElement>;
+  onKeyUpContents: React.KeyboardEventHandler<HTMLTextAreaElement>;
 }
 
 function TextArea({
@@ -16,8 +18,10 @@ function TextArea({
   labelName,
   rows,
   cols,
+  maxLength,
   value,
   onChangeContents,
+  onKeyUpContents,
 }: TextAreaProps) {
   return (
     <div>
@@ -27,8 +31,10 @@ function TextArea({
         name={name}
         rows={rows}
         cols={cols}
+        maxLength={maxLength}
         value={value}
         onChange={onChangeContents}
+        onKeyUp={onKeyUpContents}
         css={[inputStyle, textAreaStyle]}
       />
     </div>

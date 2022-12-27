@@ -5,10 +5,19 @@ interface InputProps {
   name: string;
   labelName: string;
   value: string;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
+  maxLength: number;
+  onChangeCardInfo: React.ChangeEventHandler<HTMLInputElement>;
+  onKeyUpCardInfo: React.KeyboardEventHandler<HTMLInputElement>;
 }
 
-function Input({ name, labelName, value, onChange }: InputProps) {
+function Input({
+  name,
+  labelName,
+  value,
+  maxLength,
+  onChangeCardInfo,
+  onKeyUpCardInfo,
+}: InputProps) {
   return (
     <div>
       <Label name={labelName} labelName={labelName} />
@@ -16,9 +25,11 @@ function Input({ name, labelName, value, onChange }: InputProps) {
         id={name}
         type="text"
         name={name}
-        onChange={onChange}
-        css={inputStyle}
         value={value}
+        maxLength={maxLength}
+        onChange={onChangeCardInfo}
+        onKeyUp={onKeyUpCardInfo}
+        css={inputStyle}
       />
     </div>
   );

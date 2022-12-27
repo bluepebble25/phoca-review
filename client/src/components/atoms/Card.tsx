@@ -152,7 +152,7 @@ const titleStyle = css`
 
 const contentsStyle = css`
   display: -webkit-box;
-  -webkit-line-clamp: 13;
+  -webkit-line-clamp: 12;
   -webkit-box-orient: vertical;
   overflow: hidden;
 

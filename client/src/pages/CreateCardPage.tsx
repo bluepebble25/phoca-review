@@ -6,7 +6,6 @@ import Logo from '../components/atoms/Logo';
 import CardPreview from '../components/molecules/CardPreview';
 import CardOptionList from '../components/organisms/CardOptionList';
 import { colorPalette } from '../_lib/styles/colorPalette';
-import { getTextByte } from '../_lib/utils';
 
 function CreateCardPage() {
   const [isCardFront, setIsCardFront] = useState(true);
@@ -29,22 +28,48 @@ function CreateCardPage() {
     fontColor: 'black',
   });
 
+  const maxLength = { title: 60, author: 24, contents: 340 };
+
   const inputColorRef = useRef<HTMLInputElement>(null);
 
   const onChangeCardInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const textByte = getTextByte(value);
-    if (name === 'title') {
-      textByte < 60 && setCardInfo({ ...cardInfo, [name]: value });
-    } else if (name === 'author') {
-      textByte < 36 && setCardInfo({ ...cardInfo, [name]: value });
-    }
+    setCardInfo({ ...cardInfo, [name]: value });
   };
 
   const onChangeContents = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    getTextByte(value) < 360 &&
-      setCardContents({ ...cardContents, [name]: value });
+    setCardContents({ ...cardContents, [name]: value });
+  };
+
+  const onKeyUpCardInfo = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const { name, value } = e.target as HTMLInputElement;
+    const strLength = value.length;
+    let slicedValue = value;
+    if (name === 'title' && strLength > maxLength.title) {
+      slicedValue = value.substring(0, maxLength.title);
+    } else if (name === 'author' && strLength > maxLength.author) {
+      slicedValue = value.substring(0, maxLength.author);
+    }
+    setCardInfo({ ...cardInfo, [name]: slicedValue });
+  };
+
+  const onKeyUpContents = (e: React.KeyboardEvent) => {
+    const target = e.target as HTMLTextAreaElement;
+    const value = target.value;
+    if (value.length > maxLength.contents) {
+      if (isCardFront) {
+        setCardContents({
+          ...cardContents,
+          contentsFront: value.substring(0, maxLength.contents),
+        });
+      } else {
+        setCardContents({
+          ...cardContents,
+          contentsBack: value.substring(0, maxLength.contents),
+        });
+      }
+    }
   };
 
   const onClickCardToggle = (e: React.MouseEvent) => {
@@ -177,22 +202,28 @@ function CreateCardPage() {
                 <Input
                   name="title"
                   labelName="제목"
-                  onChange={onChangeCardInfo}
                   value={cardInfo.title}
+                  maxLength={maxLength.title}
+                  onChangeCardInfo={onChangeCardInfo}
+                  onKeyUpCardInfo={onKeyUpCardInfo}
                 />
                 <Input
                   name="author"
                   labelName="작가/감독"
                   value={cardInfo.author}
-                  onChange={onChangeCardInfo}
+                  maxLength={maxLength.author}
+                  onChangeCardInfo={onChangeCardInfo}
+                  onKeyUpCardInfo={onKeyUpCardInfo}
                 />
                 <TextArea
                   name="contentsFront"
                   labelName="내용"
                   rows={10}
                   cols={40}
+                  maxLength={maxLength.contents}
                   value={cardContents.contentsFront}
                   onChangeContents={onChangeContents}
+                  onKeyUpContents={onKeyUpContents}
                 />
               </div>
             ) : (
@@ -202,8 +233,10 @@ function CreateCardPage() {
                   labelName="내용"
                   rows={10}
                   cols={40}
+                  maxLength={maxLength.contents}
                   value={cardContents.contentsBack}
                   onChangeContents={onChangeContents}
+                  onKeyUpContents={onKeyUpContents}
                 />
               </div>
             )}
