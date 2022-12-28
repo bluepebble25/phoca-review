@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import React, { useRef, useState } from 'react';
+import Button from '../components/atoms/Buttons/Button';
 import Input from '../components/atoms/Input/Input';
 import TextArea from '../components/atoms/Input/TextArea';
 import Logo from '../components/atoms/Logo';
@@ -250,6 +251,10 @@ function CreateCardPage() {
               onFileChange={onFileChange}
               isCardFront={isCardFront}
             />
+
+            <Button type="primary" margin="30px 0">
+              완료
+            </Button>
           </form>
         </div>
       </div>
