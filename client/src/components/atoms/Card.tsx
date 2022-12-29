@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { colorPalette, gradient } from '../../_lib/styles/colorPalette';
+import { shadow } from '../../_lib/styles/effectPalette';
 
 interface CardCustomType {
   type: string;
@@ -102,9 +103,11 @@ const cardStyle = (isCardFront: boolean) => css`
   height: 100%;
   transition: transform 0.5s;
   transform-style: preserve-3d;
-  border-radius: 10px;
-  font-size: 1.5rem;
   transform: ${isCardFront ? 'none' : 'rotateY(-180deg)'};
+
+  border-radius: 10px;
+  box-shadow: ${shadow.dropShadow};
+  font-size: 1.5rem;
 `;
 
 interface CardCustomType {

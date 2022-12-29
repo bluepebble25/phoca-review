@@ -252,7 +252,7 @@ function CreateCardPage() {
               isCardFront={isCardFront}
             />
 
-            <Button type="primary" margin="30px 0">
+            <Button type="primary" margin="50px 0 0 0">
               완료
             </Button>
           </form>
@@ -271,6 +271,7 @@ const containerStyle = css`
   height: 100%;
   width: 1000px;
   margin: 0 auto;
+  padding-bottom: 80px;
   background-color: white;
 `;
 
@@ -278,7 +279,7 @@ const innerStyle = css`
   display: flex;
   justify-content: space-between;
   width: 700px;
-  margin: 30px auto;
+  margin: 40px auto 0 auto;
 `;
 
 const formStyle = css`

@@ -42,7 +42,7 @@ function CardPreview({
         cardInfo={cardInfo}
         cardContents={cardContents}
       />
-      <div css={flipTooAreaStyle}>
+      <div css={flipToolStyle}>
         <CardFlipLabel isCardFront={isCardFront} onClick={onClickCardToggle} />
         <div css={buttonWrapperStyle}>
           <FlipButton buttonSize={28} onClick={onClickCardToggle} />
@@ -56,7 +56,7 @@ const cardPreviewStyle = css`
   width: 48%;
 `;
 
-const flipTooAreaStyle = css`
+const flipToolStyle = css`
   position: relative;
   display: flex;
   justify-content: space-between;

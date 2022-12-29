@@ -20,7 +20,7 @@ function CardFlipLabel({ isCardFront, onClick }: CardFlipLabelProps) {
 }
 
 const labelContainerStyle = css`
-  margin-top: 12px;
+  margin-top: 15px;
   font-size: 1.6rem;
 `;
 
