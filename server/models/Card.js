@@ -1,151 +1,108 @@
+const BgOption = {
+  type: 'object',
+  properties: {
+    color: {
+      type: 'string',
+    },
+    gradient: {
+      type: 'string',
+    },
+  },
+};
+
+const Image = {
+  type: 'object',
+  properties: {
+    filename: {
+      type: 'string',
+    },
+  },
+  required: ['filename'],
+};
+
+const Font = {
+  type: 'object',
+  properties: {
+    color: {
+      type: 'string',
+    },
+  },
+  required: ['color'],
+};
+
+const Cardface = {
+  type: 'object',
+  properties: {
+    content: {
+      type: 'string',
+    },
+    background: BgOption,
+    image: Image,
+    font: Font,
+  },
+  required: ['content', 'font'],
+};
+
 const CardSchema = {
   type: 'object',
   properties: {
+    id: {
+      type: 'number',
+    },
     title: {
       type: 'string',
     },
     author: {
       type: 'string',
     },
-
-    front: {
-      type: 'object',
-      properties: {
-        content: {
-          type: 'string',
-        },
-        background: {
-          type: 'object',
-          properties: {
-            color: {
-              type: 'string',
-            },
-            gradient: {
-              type: 'string',
-            },
-          },
-        },
-        image: {
-          type: 'object',
-          properties: {
-            url: {
-              type: 'string',
-            },
-            translate: {
-              type: 'array',
-              items: [
-                {
-                  type: 'integer',
-                },
-                {
-                  type: 'integer',
-                },
-              ],
-              minItems: 2,
-              additionalItems: false,
-            },
-          },
-          required: ['url', 'translate'],
-        },
-        text: {
-          type: 'object',
-          properties: {
-            color: {
-              type: 'string',
-            },
-            size: {
-              type: 'string',
-            },
-          },
-          required: ['color', 'size'],
-        },
-      },
-      required: ['content', 'text'],
-    },
-
-    back: {
-      type: 'object',
-      properties: {
-        content: {
-          type: 'string',
-        },
-        background: {
-          type: 'object',
-          properties: {
-            color: {
-              type: 'string',
-            },
-            gradient: {
-              type: 'string',
-            },
-          },
-        },
-        image: {
-          type: 'object',
-          properties: {
-            url: {
-              type: 'string',
-            },
-            translate: {
-              type: 'array',
-              items: [
-                {
-                  type: 'integer',
-                },
-                {
-                  type: 'integer',
-                },
-              ],
-              minItems: 2,
-              additionalItems: false,
-            },
-          },
-          required: ['url', 'translate'],
-        },
-        text: {
-          type: 'object',
-          properties: {
-            color: {
-              type: 'string',
-            },
-            size: {
-              type: 'string',
-            },
-          },
-          required: ['color', 'size'],
-        },
-      },
-      required: ['content', 'text'],
-    },
-
+    front: Cardface,
+    back: Cardface,
     date: {
       type: 'string',
     },
   },
-  required: ['title', 'author', 'front', 'back', 'date'],
+  required: ['title', 'author', 'front', 'back'],
 };
 
 module.exports = { CardSchema };
 
 /***Card data Example***/
-// A card only can have either background property or image property.
-// At background property, either color or gradient too.
+/* Request */
 /*
 {
+  "id": 1,
   "title": "hello",
   "author": "world",
   "front": {
     "content": "This is content",
-    "background": { "color": "black"},
-    "image": { "url": "uploads/card_info/filename_date", "translate": [50, 0] },
-    "text": { "color": "white", "size": "medium" }
+    "image": { "filename": "cloud1234.jpg" },
+    "font": { "color": "white" }
   },
   "back": {
-    "content": "Back",
-    "background": { "gradient": "linear-gradient(0.25turn, #3f87a6, #ebf8e1, #f69d3c)" },
-    "image": { "url": "", "translate": [0, 0]},
-    "text": { "color": "white", "size": "big"}
+    "content": "Also this is content",
+    "background": { "gradient": "unripen mango" },
+    "font": { "color": "white" }
   },
-  "date": ""
+  "date": "2023-01-01 00:00:01"
+}
+*/
+
+/* Response */
+/*
+{
+  "id": 1,
+  "title": "hello",
+  "author": "world",
+  "front": {
+    "content": "This is content",
+    "image": { "filename": "cloud1234.jpg" },
+    "font": { "color": "white" }
+  },
+  "back": {
+    "content": "Also this is content",
+    "background": { "gradient": "unripen mango" },
+    "font": { "color": "white" }
+  },
+  "date": "2023-01-01 00:00:01"
 }
 */

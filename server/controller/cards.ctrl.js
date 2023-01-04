@@ -54,9 +54,10 @@ const getCard = (req, res) => {
 
 const createCard = (req, res) => {
   try {
+    console.log(req.body.data);
     let card = JSON.parse(req.body.data);
-    const isValid = ajv.validate(CardSchema, card);
 
+    const isValid = ajv.validate(CardSchema, card);
     if (!isValid) {
       const err = new Error(
         '클라이언트로부터 받은 정보가 Card Schema 양식에 맞지 않음.'
@@ -72,23 +73,23 @@ const createCard = (req, res) => {
       const backImg = card.back.image;
       const images = [frontImg, backImg];
       /*
-        1. 파일 0개 image.url = ''
-        2. 파일 1개 image.url이 빈 문자열 아닌 곳에 image.url = req.files[0].filename
-        3. 파일 2개 image.url에 차례대로 files[0], files[1]의 filename 대입
+        1. 파일 0개 image.filename = ''
+        2. 파일 1개 image.filename이 빈 문자열 아닌 곳에 image.filename = req.files[0].filename
+        3. 파일 2개 image.filename에 차례대로 files[0], files[1]의 filename 대입
       */
       if (req.files && req.files.length === 2) {
         images.forEach((image, i) => {
-          image.url = `uploads/images/${req.files[i].filename}`;
+          image.filename = `${req.files[i].filename}`;
         });
       } else if (req.files && req.files.length === 1) {
         images.forEach((image) => {
-          if (image.url !== '') {
-            image.url = `uploads/images/${req.files[0].filename}`;
+          if (image.filename !== '') {
+            image.filename = `${req.files[0].filename}`;
           }
         });
       } else {
         images.forEach((image) => {
-          image.url = '';
+          image.filename = '';
         });
       }
 
@@ -170,35 +171,38 @@ const updateCard = (req, res) => {
       // 이미지 파일 안받았을 때
       if (!req.files || (Array.isArray(req.files) && req.files.length === 0)) {
         for (let i = 0; i < prevImages.length; i++) {
-          // 원래 url 있었는데 새로받은 url이 빈칸인 경우 (삭제)
-          if (prevImages[i].url !== '' && currentImages[i].url === '') {
-            deleteFile(prevImages[i].url);
+          // 원래 filename 있었는데 새로받은 filename이 빈칸인 경우 (삭제)
+          if (
+            prevImages[i].filename !== '' &&
+            currentImages[i].filename === ''
+          ) {
+            deleteFile(prevImages[i].filename);
           }
         }
       } else {
         // 이미지 파일 1개 받았을 때
-        // O는 문자열 존재, X는 빈문자열 / 왼쪽은 기존 url, 오른쪽은 새로 받은 url
+        // O는 문자열 존재, X는 빈문자열 / 왼쪽은 기존 filename, 오른쪽은 새로 받은 filename
         /*
-          1. 이전 url값과 현재값이 다른 경우
+          1. 이전 filename값과 현재값이 다른 경우
             1) O X delete
             2) O O(이전과 다름) delete 후 req.files[0]로 교체
             3) X O req.files[0]로 교체
-          2. 이전 url값과 현재값이 같은 경우 skip (if문 작성 X)
+          2. 이전 filename값과 현재값이 같은 경우 skip (if문 작성 X)
             4) O O
             5) X X
       */
         if (req.files.length === 1) {
           for (let i = 0; i < prevImages.length; i++) {
-            if (prevImages[i].url !== currentImages[i].url) {
+            if (prevImages[i].filename !== currentImages[i].filename) {
               // 이전에 이미지가 있었다면 지우고
-              if (prevImages[i].url !== '') {
-                deleteFile(prevImages[i].url);
+              if (prevImages[i].filename !== '') {
+                deleteFile(prevImages[i].filename);
               }
               // 업데이트된 이미지가 있다면 교체한다
-              if (currentImages[i].url !== '') {
+              if (currentImages[i].filename !== '') {
                 currentImages[
                   i
-                ].url = `uploads/images/${req.files[0].filename}`;
+                ].filename = `uploads/images/${req.files[0].filename}`;
               }
             }
           }
@@ -206,10 +210,12 @@ const updateCard = (req, res) => {
           // 이미지 파일 2개 받았을 때
           // 둘 다 삭제후 req.files[0], [1] 차례대로 current에 대입
           prevImages.forEach((img) => {
-            deleteFile(img.url);
+            deleteFile(img.filename);
           });
           for (let i = 0; i < prevImages.length; i++) {
-            currentImages[i].url = `uploads/images/${req.files[i].filename}`;
+            currentImages[
+              i
+            ].filename = `uploads/images/${req.files[i].filename}`;
           }
         }
       }
@@ -269,12 +275,12 @@ const deleteCard = (req, res) => {
   }
 
   const card = readCard(filename);
-  const imageUrl = [card.front.image.url, card.back.image.url];
+  const imageName = [card.front.image.filename, card.back.image.filename];
 
   try {
-    imageUrl.forEach((url) => {
-      if (url !== '') {
-        deleteFile(url);
+    imageName.forEach((name) => {
+      if (name !== '') {
+        deleteFile(name);
         console.log('이미지 삭제 성공');
       }
     });
