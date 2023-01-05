@@ -196,13 +196,11 @@ const updateCard = (req, res) => {
             if (prevImages[i].filename !== currentImages[i].filename) {
               // 이전에 이미지가 있었다면 지우고
               if (prevImages[i].filename !== '') {
-                deleteFile(prevImages[i].filename);
+                deleteFile('uploads/images/' + prevImages[i].filename);
               }
               // 업데이트된 이미지가 있다면 교체한다
               if (currentImages[i].filename !== '') {
-                currentImages[
-                  i
-                ].filename = `uploads/images/${req.files[0].filename}`;
+                currentImages[i].filename = req.files[0].filename;
               }
             }
           }
@@ -213,9 +211,7 @@ const updateCard = (req, res) => {
             deleteFile(img.filename);
           });
           for (let i = 0; i < prevImages.length; i++) {
-            currentImages[
-              i
-            ].filename = `uploads/images/${req.files[i].filename}`;
+            currentImages[i].filename = req.files[i].filename;
           }
         }
       }
@@ -280,7 +276,7 @@ const deleteCard = (req, res) => {
   try {
     imageName.forEach((name) => {
       if (name !== '') {
-        deleteFile(name);
+        deleteFile('uploads/images/' + name);
         console.log('이미지 삭제 성공');
       }
     });
