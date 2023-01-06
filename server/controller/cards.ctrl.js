@@ -13,18 +13,21 @@ const {
 
 // controllers
 const getAllCards = (req, res) => {
-  const page = parseInt(req.query.page || 1);
-  const limit = parseInt(req.query.limit || 36);
+  let page = Number(req.query.page) || 1;
+  const size = 32;
 
-  if (Number.isNaN(page) || Number.isNaN(limit)) {
-    return res
-      .status(400)
-      .send('page 혹은 limit에 정수값을 넣었는지 확인해주세요.');
+  if (!Number.isInteger(page)) {
+    return res.status(400).send('page는 1 이상의 정수값이어야 합니다.');
   }
+  page = page < 1 ? 1 : page;
 
   try {
-    const cards = readCards('uploads/card_info/', page, limit);
-    res.json(cards);
+    const cards = readCards('uploads/card_info/', page, size);
+    const data = {
+      page: page,
+      results: cards,
+    };
+    res.json(data);
   } catch (e) {
     res
       .status(500)
@@ -100,15 +103,13 @@ const createCard = (req, res) => {
       };
       card = Object.assign(obj, card);
 
-      console.log('card', card);
-
       // 카드 저장 및 인덱스 업데이트
       fs.writeFileSync(
         `uploads/card_info/${index}-${card.title}.json`,
         JSON.stringify(card)
       );
       fs.writeFileSync('uploads/index.txt', `${index}`);
-      res.status(201).end();
+      res.status(201).json(card);
     }
   } catch (e) {
     console.error(e.stack);
@@ -225,7 +226,7 @@ const updateCard = (req, res) => {
         );
       }
     }
-    res.status(200).end();
+    res.json(card);
   } catch (e) {
     console.error(e.stack);
 
@@ -283,7 +284,7 @@ const deleteCard = (req, res) => {
 
     deleteFile('uploads/card_info/' + filename);
     console.log('파일 삭제 성공');
-    res.status(200).end();
+    res.json(card);
   } catch (err) {
     console.log(err);
     res.status(500).send(err.message);
