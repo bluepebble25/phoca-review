@@ -133,7 +133,6 @@ function Book() {
 }
 
 const containerStyle = css`
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
