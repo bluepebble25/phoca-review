@@ -10,6 +10,7 @@
    - [3. createCard](#3-createcard)
    - [4. updateCard](#4-updatecard)
    - [5. deleteCard](#5-deletecard)
+4. [이미지 불러오는 법](#이미지-불러오는-법)
 
 ## REST Resource: Card
 
@@ -19,10 +20,10 @@
   "title": string,
   "author": string,
   "front": {
-    object (FaceInfo)
+    object (Cardface)
   },
   "back": {
-    object (FaceInfo)
+    object (Cardface)
   },
   "date": "2022-12-31 17:30:22"
 }
@@ -33,39 +34,61 @@
 | id     | number            | 카드 식별자(id)                            |
 | title  | string            | 카드 제목                                  |
 | author | string            | 작가 혹은 감독 이름                        |
-| front  | object (FaceInfo) | 앞면의 정보                                |
-| back   | object (FaceInfo) | 뒷면의 정보                                |
+| front  | object (Cardface) | 앞면의 정보                                |
+| back   | object (Cardface) | 뒷면의 정보                                |
 | date   | string            | “yyyy-MM-dd HH:mm:ss” 형식의 카드 생성일자 |
 
-### FaceInfo
+### Cardface
 
-카드에는 양쪽면이 있는데(front, back) FaceInfo는 각 면에 들어갈 정보들을 가지고 있다.
+카드에는 양쪽면이 존재하고(front, back) Cardface는 각 면에 들어갈 정보들을 가지고 있다.
 
 ```
 {
   "content": string,
   "background": {
-	  object (BgOption)
+    object (BgOption)
   },
-  "font": { "color": string }
+  "image": {
+    object (Image)
+  }
+  "font": {
+    object (Font)
+  }
 }
 ```
+
+background와 image 필드는 둘 중 하나만 올 수 있다. 만약 그렇지 않고 둘 다 들어오게 된다면, background 옵션은 무시되고 image 정보만 저장된다.
 
 | Fields     | Type              | Description                                                                  |
 | ---------- | ----------------- | ---------------------------------------------------------------------------- |
 | content    | string            | 카드 내용                                                                    |
-| background | object (BgOption) | 카드 배경 옵션                                                               |
+| background | object (BgOption) | 카드 배경색 옵션                                                             |
+| image      | object (Image)    | 카드 배경 이미지 관련 정보                                                   |
 | font       | object            | 폰트 옵션. .현재는 색 설정 옵션밖에 없다. 색은 black, white 둘 중 하나 선택. |
 
 ### BgOption
 
-옵션은 필수이며 셋 중 하나만 선택할 수 있다.
-
-| Fields   | Type   | Description                                                                                        |
+둘 중 하나만 선택할 수 있다. 이미지 배경을 선택한다면 Image 옵션만 작성하고 BgOption은 작성하지 않는다.
+| Fields | Type | Description |
 | -------- | ------ | -------------------------------------------------------------------------------------------------- |
-| color    | string | 카드의 색깔. 미리 정해진 6가지 컬러 이름 혹은 Hex Color Code (ex - #FFFFFF)로 값을 설정할 수 있다. |
-| gradient | string | 미리 정해진 5가지 그라디언트의 이름 중 하나를 설정할 수 있다.                                      |
-| image    | string | 이미지가 서버에 저장된 파일명 ex) cloud1234.jpg                                                    |
+| color | string | 카드의 색깔. 미리 정해진 6가지 컬러 이름 혹은 Hex Color Code (ex - #FFFFFF)로 값을 설정할 수 있다. |
+| gradient | string | 미리 정해진 5가지 그라디언트의 이름 중 하나를 설정할 수 있다. |
+
+### Image
+
+BgOption을 선택했다면 이 옵션은 선택하지 않는다.
+
+| Fields   | Type   | Description                                     |
+| -------- | ------ | ----------------------------------------------- |
+| filename | string | 이미지가 서버에 저장된 파일명 ex) cloud1234.jpg |
+
+### Font
+
+필수 옵션.
+
+| Fields | Type   | Description                                                  |
+| ------ | ------ | ------------------------------------------------------------ |
+| color  | string | 폰트 색. `white`, `black` 중 하나 선택. default 값은 `black` |
 
 ### Example
 
@@ -81,7 +104,7 @@
   },
   "back": {
     "content": "Also this is content",
-    "background": { "image": "cloud123456.png" },
+    "image": { "filename": "cloud12345.jpg" },
     "font": { "color": "black" }
   },
   "date": "2022-12-31 17:30:22"
@@ -98,6 +121,8 @@
 | updateCard  | POST   | POST /api/cards/:id   |
 | deleteCard  | DELETE | DELETE /api/cards/:id |
 
+URI로 직접 호출하지 않아도 `CardApi` 클래스로부터 간편하게 메소드로 호출할 수도 있다.
+
 ## 1. getAllCards
 
 카드들을 가져온다.
@@ -108,10 +133,9 @@
 
 ### Query parameters
 
-| Parameters | Type   | Description                                                                                                          |
-| ---------- | ------ | -------------------------------------------------------------------------------------------------------------------- |
-| limit      | number | 가져올 카드의 최대 개수. default 값은 16. maximum은 32                                                               |
-| page       | number | 카드를 한 번 가져오는 단위를 1페이지라고 할 때, 몇 번째 페이지를 가져올지에 대한 속성. 없다면 1 페이지부터 가져온다. |
+| Parameters | Type   | Description                          |
+| ---------- | ------ | ------------------------------------ |
+| page       | number | 조회하려는 페이지 번호. `default`: 1 |
 
 ### Request body
 
@@ -123,34 +147,31 @@ Request body는 비어있어야 함.
 
 ```
 {
-	"message": "ok",
-	"cards": [
+	"page": 1,
+	"results": [
 		object (Card)
-	],
-	"nextPage": number,
-	"totalNum": number
+	]
 }
 ```
 
-| Fields   | Type          | Description                         |
-| -------- | ------------- | ----------------------------------- |
-| cards[]  | object (Card) | 카드 목록                           |
-| nextPage | number        | 다음 페이지의 인덱스                |
-| totalNum | number        | 폴더에 저장되어 있는 카드의 총 개수 |
+| Fields    | Type             | Description |
+| --------- | ---------------- | ----------- |
+| page      | number (integer) | 페이지 번호 |
+| results[] | object (Card)    | 카드 목록   |
 
 ```json
 {
-  "message": "Parameter in the wrong format. The limit and page parameters must be numeric."
+  "message": "Parameter in the wrong format. The page parameter must be numeric."
 }
 ```
 
 ### Status code
 
-| Status Code | Description                                                  |
-| ----------- | ------------------------------------------------------------ |
-| 200         | 성공                                                         |
-| 400         | 잘못된 요청 (ex - 잘못된 형식의 쿼리 파라미터를 입력한 경우) |
-| 500         | 서버 내부 error                                              |
+| Status Code | Description                                             |
+| ----------- | ------------------------------------------------------- |
+| 200         | 성공                                                    |
+| 400         | 잘못된 요청 (잘못된 형식의 쿼리 파라미터를 입력한 경우) |
+| 500         | 서버 내부 error                                         |
 
 ## 2. getCard
 
@@ -176,23 +197,20 @@ Request body는 비어있어야 함.
 
 ```json
 {
-  "message": "ok",
-  "result": {
-    "id": 1,
-    "title": "Faust",
-    "author": "Johann Wolfgang von Goethe",
-    "front": {
-      "content": "This is content",
-      "background": { "color": "black" },
-      "font": { "color": "white" }
-    },
-    "back": {
-      "content": "Also this is content",
-      "background": { "image": "cloud123456.png" },
-      "font": { "color": "black" }
-    },
-    "date": "2022-12-31 17:30:22"
-  }
+  "id": 1,
+  "title": "Faust",
+  "author": "Johann Wolfgang von Goethe",
+  "front": {
+    "content": "This is content",
+    "background": { "color": "black" },
+    "font": { "color": "white" }
+  },
+  "back": {
+    "content": "Also this is content",
+    "image": { "filename": "cloud123456.png" },
+    "font": { "color": "black" }
+  },
+  "date": "2022-12-31 17:30:22"
 }
 ```
 
@@ -233,32 +251,48 @@ formData 형식으로 다음 두 가지 필드를 append해서 전송해야 한�
 
 file 부분은 옵션이다.
 
-| Field | Description                                                                                                                                                                        |
-| ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| file  | 이미지 파일들을 file이라는 이름으로 formData에 추가한다.                                                                                                                           |
-| data  | Card 양식에 맞춰 json 형태로 카드 정보를 담는다. 단 background.image 필드의 값은 해당 면에 배경 이미지를 첨부할 예정이면 “파일명”, 첨부하지 않을거라면 “” (빈 문자열)을 줘야 한다. |
+| Field | Description                                                                                                                                                                                                                                                    |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| file  | 이미지 파일들을 file이라는 이름으로 formData에 추가한다.                                                                                                                                                                                                       |
+| data  | [Card](#rest-resource-card) 양식에 맞춰 json 형태로 카드 정보를 담는다. 단, id 필드는 서버에서 부여해주기 때문에 작성하지 않는다. image 필드의 filename 값은 해당 면에 배경 이미지를 첨부할 예정이면 “파일명”, 첨부하지 않을거라면 “” (빈 문자열)을 줘야 한다. |
+
+```json
+// data Field
+{
+  "title": "Faust",
+  "author": "Johann Wolfgang von Goethe",
+  "front": {
+    "content": "This is content",
+    "background": { "color": "black" },
+    "font": { "color": "white" }
+  },
+  "back": {
+    "content": "Also this is content",
+    "image": { "filename": "cloud123456.png" },
+    "font": { "color": "black" }
+  },
+  "date": "2022-12-31 17:30:22"
+}
+```
 
 ### Response body
 
 ```json
 {
-  "message": "ok",
-  "result": {
-    "id": 1,
-    "title": "Faust",
-    "author": "Johann Wolfgang von Goethe",
-    "front": {
-      "content": "This is content",
-      "background": { "color": "black" },
-      "font": { "color": "white" }
-    },
-    "back": {
-      "content": "Also this is content",
-      "background": { "image": "cloud123456.png" },
-      "font": { "color": "black" }
-    },
-    "date": "2022-12-31 17:30:22"
-  }
+  "id": 1,
+  "title": "Faust",
+  "author": "Johann Wolfgang von Goethe",
+  "front": {
+    "content": "This is content",
+    "background": { "color": "black" },
+    "font": { "color": "white" }
+  },
+  "back": {
+    "content": "Also this is content",
+    "background": { "image": "cloud123456.png" },
+    "font": { "color": "black" }
+  },
+  "date": "2022-12-31 17:30:22"
 }
 ```
 
@@ -311,23 +345,20 @@ formData 형식으로 다음 두 가지 필드를 append해서 전송해야 한�
 
 ```json
 {
-  "message": "ok",
-  "result": {
-    "id": 1,
-    "title": "Faust",
-    "author": "Johann Wolfgang von Goethe",
-    "front": {
-      "content": "This is content",
-      "background": { "color": "black" },
-      "font": { "color": "white" }
-    },
-    "back": {
-      "content": "Also this is content",
-      "background": { "image": "cloud123456.png" },
-      "font": { "color": "black" }
-    },
-    "date": "2022-12-31 17:30:22"
-  }
+  "id": 1,
+  "title": "Faust",
+  "author": "Johann Wolfgang von Goethe",
+  "front": {
+    "content": "This is content",
+    "background": { "color": "black" },
+    "font": { "color": "white" }
+  },
+  "back": {
+    "content": "Also this is content",
+    "background": { "image": "cloud123456.png" },
+    "font": { "color": "black" }
+  },
+  "date": "2022-12-31 17:30:22"
 }
 ```
 
@@ -376,23 +407,20 @@ Request body는 비어있어야 함.
 
 ```json
 {
-  "message": "ok",
-  "result": {
-    "id": 1,
-    "title": "Faust",
-    "author": "Johann Wolfgang von Goethe",
-    "front": {
-      "content": "This is content",
-      "background": { "color": "black" },
-      "font": { "color": "white" }
-    },
-    "back": {
-      "content": "Also this is content",
-      "background": { "image": "cloud123456.png" },
-      "font": { "color": "black" }
-    },
-    "date": "2022-12-31 17:30:22"
-  }
+  "id": 1,
+  "title": "Faust",
+  "author": "Johann Wolfgang von Goethe",
+  "front": {
+    "content": "This is content",
+    "background": { "color": "black" },
+    "font": { "color": "white" }
+  },
+  "back": {
+    "content": "Also this is content",
+    "background": { "image": "cloud123456.png" },
+    "font": { "color": "black" }
+  },
+  "date": "2022-12-31 17:30:22"
 }
 ```
 
