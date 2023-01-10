@@ -86,13 +86,9 @@ const createCard = (req, res) => {
         });
       } else if (req.files && req.files.length === 1) {
         images.forEach((image) => {
-          if (image.filename !== '') {
+          if (image && image.filename) {
             image.filename = `${req.files[0].filename}`;
           }
-        });
-      } else {
-        images.forEach((image) => {
-          image.filename = '';
         });
       }
 

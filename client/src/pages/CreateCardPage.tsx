@@ -1,5 +1,4 @@
 import { css } from '@emotion/react';
-import axios from 'axios';
 import React, { useRef, useState } from 'react';
 import Button from '../components/atoms/Buttons/Button';
 import Input from '../components/atoms/Input/Input';
@@ -24,11 +23,13 @@ function CreateCardPage() {
     type: 'color',
     value: colorPalette.white,
     fontColor: 'black',
+    file: new File([], 'file1'),
   });
   const [cardCustomBack, setCardCustomBack] = useState({
     type: 'color',
     value: colorPalette.white,
     fontColor: 'black',
+    file: new File([], 'file1'),
   });
 
   const maxLength = { title: 60, author: 24, contents: 340 };
@@ -43,10 +44,10 @@ function CreateCardPage() {
     }
     const formData = new FormData();
     if (cardCustomFront.type === 'image') {
-      formData.append('file', cardCustomFront.value);
+      formData.append('file', cardCustomFront.file);
     }
     if (cardCustomBack.type === 'image') {
-      formData.append('file', cardCustomFront.value);
+      formData.append('file', cardCustomFront.file);
     }
 
     let data = {
@@ -65,7 +66,7 @@ function CreateCardPage() {
           },
         }),
         ...(cardCustomFront.type === 'image' && {
-          image: { filename: 'value' },
+          image: { filename: cardCustomFront.file.name },
         }),
         font: { color: cardCustomFront.fontColor },
       },
@@ -80,7 +81,7 @@ function CreateCardPage() {
           },
         }),
         ...(cardCustomBack.type === 'image' && {
-          image: { filename: cardCustomBack.value },
+          image: { filename: cardCustomBack.file.name },
         }),
         font: { color: cardCustomBack.fontColor },
       },
@@ -233,11 +234,13 @@ function CreateCardPage() {
           ...cardCustomFront,
           type: 'image',
           value: selectedFiles[0],
+          file: files[0],
         })
       : setCardCustomBack({
           ...cardCustomFront,
           type: 'image',
           value: selectedFiles[0],
+          file: files[0],
         });
   };
 
