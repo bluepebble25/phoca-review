@@ -16,8 +16,8 @@ interface CardProps {
     author: string;
   };
   cardContents: {
-    contentsFront: string;
-    contentsBack: string;
+    front: string;
+    back: string;
   };
   isCardFront: boolean;
 }
@@ -77,13 +77,13 @@ function Card({
           cardCustomFront={cardCustomFront}
           faceType="front"
           cardInfo={cardInfo}
-          cardContents={cardContents.contentsFront}
+          cardContents={cardContents.front}
         />
         <CardFace
           cardCustomBack={cardCustomBack}
           faceType="back"
           cardInfo={cardInfo}
-          cardContents={cardContents.contentsBack}
+          cardContents={cardContents.back}
         />
       </div>
     </div>

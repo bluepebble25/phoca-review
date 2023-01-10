@@ -63,6 +63,7 @@ function CardOptionItem({
           );
         })}
 
+        {/* 단색 배경색 리스트 마지막에 붙는 color picker */}
         {type === 'color' && (
           <input
             type="color"
@@ -72,6 +73,7 @@ function CardOptionItem({
           />
         )}
 
+        {/* 그라디언트 배경 리스트 마지막에 붙는 이미지 파일 선택 input */}
         {type === 'gradient' && (
           <>
             <div css={fileInputBoxStyle(isCardFront!)}>

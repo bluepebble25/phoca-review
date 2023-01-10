@@ -2,28 +2,40 @@ import { css } from '@emotion/react';
 
 interface ButtonProps {
   children: React.ReactNode;
-  type: ButtonType;
+  type: 'button' | 'submit' | 'reset';
+  priority: ButtonPriority;
   margin: string;
+  onClickHandler?: React.MouseEventHandler | React.FormEventHandler;
 }
 
-type ButtonType = 'primary' | 'secondary';
+type ButtonPriority = 'primary' | 'secondary';
 
-function Button({ children, type, margin }: ButtonProps) {
+function Button({
+  children,
+  type,
+  priority,
+  margin,
+  onClickHandler,
+}: ButtonProps) {
   return (
-    <button type="button" css={buttonStyle(type, margin)}>
+    <button
+      type={type}
+      css={buttonStyle(priority, margin)}
+      onClick={onClickHandler}
+    >
       <span css={fontStyle}>
-        {type === 'primary' ? children : <strong>{children}</strong>}
+        {priority === 'primary' ? children : <strong>{children}</strong>}
       </span>
     </button>
   );
 }
 
-const buttonStyle = (type: ButtonType, margin: string) => css`
+const buttonStyle = (priority: ButtonPriority, margin: string) => css`
   padding: 17px 0;
   margin: ${margin};
-  background-color: ${type === 'primary' ? 'black' : 'white'};
-  color: ${type === 'primary' ? 'white' : 'black'};
-  border: ${type === 'primary' ? 'none' : '2px solid black'};
+  background-color: ${priority === 'primary' ? 'black' : 'white'};
+  color: ${priority === 'primary' ? 'white' : 'black'};
+  border: ${priority === 'primary' ? 'none' : '2px solid black'};
   border-radius: 6px;
 
   cursor: pointer;

@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+import axios from 'axios';
 import React, { useRef, useState } from 'react';
 import Button from '../components/atoms/Buttons/Button';
 import Input from '../components/atoms/Input/Input';
@@ -6,6 +7,7 @@ import TextArea from '../components/atoms/Input/TextArea';
 import Logo from '../components/atoms/Logo';
 import CardPreview from '../components/molecules/CardPreview';
 import CardOptionList from '../components/organisms/CardOptionList';
+import CardApi from '../_lib/api/CardApi';
 import { colorPalette } from '../_lib/styles/colorPalette';
 
 function CreateCardPage() {
@@ -15,8 +17,8 @@ function CreateCardPage() {
     author: '',
   });
   const [cardContents, setCardContents] = useState({
-    contentsFront: '',
-    contentsBack: '',
+    front: '',
+    back: '',
   });
   const [cardCustomFront, setCardCustomFront] = useState({
     type: 'color',
@@ -30,8 +32,63 @@ function CreateCardPage() {
   });
 
   const maxLength = { title: 60, author: 24, contents: 340 };
+  const inputColorRef = useRef<HTMLInputElement>(null); // 무지개빛 이미지를 클릭하면 원격으로 <input type="color"/>를 클릭하기 위한 속성
 
-  const inputColorRef = useRef<HTMLInputElement>(null);
+  const onClickSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!cardInfo.title || !cardInfo.author) {
+      alert('제목과 작가/감독 란 입력은 필수입니다.');
+      return;
+    }
+    const formData = new FormData();
+    if (cardCustomFront.type === 'image') {
+      formData.append('file', cardCustomFront.value);
+    }
+    if (cardCustomBack.type === 'image') {
+      formData.append('file', cardCustomFront.value);
+    }
+
+    let data = {
+      title: cardInfo.title,
+      author: cardInfo.author,
+      front: {
+        content: cardContents.front ? cardContents.front : '',
+        ...(cardCustomFront.type === 'color' && {
+          background: {
+            color: cardCustomFront.value,
+          },
+        }),
+        ...(cardCustomFront.type === 'gradient' && {
+          background: {
+            gradient: cardCustomFront.value,
+          },
+        }),
+        ...(cardCustomFront.type === 'image' && {
+          image: { filename: 'value' },
+        }),
+        font: { color: cardCustomFront.fontColor },
+      },
+      back: {
+        content: cardContents.back ? cardContents.back : '',
+        ...(cardCustomBack.type === 'color' && {
+          background: { color: cardCustomBack.value },
+        }),
+        ...(cardCustomBack.type === 'gradient' && {
+          background: {
+            gradient: cardCustomBack.value,
+          },
+        }),
+        ...(cardCustomBack.type === 'image' && {
+          image: { filename: cardCustomBack.value },
+        }),
+        font: { color: cardCustomBack.fontColor },
+      },
+    };
+    formData.append('data', JSON.stringify(data));
+
+    CardApi.createCard(formData);
+  };
 
   const onChangeCardInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -62,12 +119,12 @@ function CreateCardPage() {
       if (isCardFront) {
         setCardContents({
           ...cardContents,
-          contentsFront: value.substring(0, maxLength.contents),
+          front: value.substring(0, maxLength.contents),
         });
       } else {
         setCardContents({
           ...cardContents,
-          contentsBack: value.substring(0, maxLength.contents),
+          back: value.substring(0, maxLength.contents),
         });
       }
     }
@@ -217,12 +274,12 @@ function CreateCardPage() {
                   onKeyUpCardInfo={onKeyUpCardInfo}
                 />
                 <TextArea
-                  name="contentsFront"
+                  name="front"
                   labelName="내용"
                   rows={10}
                   cols={40}
                   maxLength={maxLength.contents}
-                  value={cardContents.contentsFront}
+                  value={cardContents.front}
                   onChangeContents={onChangeContents}
                   onKeyUpContents={onKeyUpContents}
                 />
@@ -230,12 +287,12 @@ function CreateCardPage() {
             ) : (
               <div css={inputAreaStyle}>
                 <TextArea
-                  name="contentsBack"
+                  name="back"
                   labelName="내용"
                   rows={10}
                   cols={40}
                   maxLength={maxLength.contents}
-                  value={cardContents.contentsBack}
+                  value={cardContents.back}
                   onChangeContents={onChangeContents}
                   onKeyUpContents={onKeyUpContents}
                 />
@@ -252,7 +309,12 @@ function CreateCardPage() {
               isCardFront={isCardFront}
             />
 
-            <Button type="primary" margin="50px 0 0 0">
+            <Button
+              type="submit"
+              priority="primary"
+              margin="50px 0 0 0"
+              onClickHandler={onClickSubmit}
+            >
               완료
             </Button>
           </form>

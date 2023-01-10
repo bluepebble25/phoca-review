@@ -18,8 +18,8 @@ interface CardPreviewProps {
     author: string;
   };
   cardContents: {
-    contentsFront: string;
-    contentsBack: string;
+    front: string;
+    back: string;
   };
   isCardFront: boolean;
   onClickCardToggle: React.MouseEventHandler<HTMLSpanElement>;

@@ -8,8 +8,19 @@ class CardApi {
     return res;
   }
 
-  static async createCard() {
-    const res = await axios.post('/cards');
+  static async createCard(formData: FormData) {
+    const res = await axios
+      .post('/cards', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
     return res;
   }
