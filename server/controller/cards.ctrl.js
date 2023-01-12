@@ -9,6 +9,7 @@ const {
   getFilenameById,
   readCard,
   timeStamp,
+  getTotalFileNum,
 } = require('../_lib/helpers');
 
 // controllers
@@ -23,11 +24,12 @@ const getAllCards = (req, res) => {
 
   try {
     const cards = readCards('uploads/card_info/', page, size);
+    const totalCardNum = getTotalFileNum('uploads/card_info');
     const data = {
       page: page,
       results: cards,
     };
-    res.json(data);
+    res.header('X-Total-Count', totalCardNum).json(data);
   } catch (e) {
     res
       .status(500)

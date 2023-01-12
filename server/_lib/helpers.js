@@ -82,10 +82,21 @@ function timeStamp() {
   return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
 }
 
+/**
+ *
+ * @param {string} path 디렉토리 경로
+ * @returns 해당 디렉토리에 위치한 파일의 총 개수를 number 형태로 반환한다.
+ */
+function getTotalFileNum(path) {
+  const fileList = fs.readdirSync(path);
+  return fileList.length;
+}
+
 module.exports = {
   getFilenameById,
   readCards,
   readCard,
   deleteFile,
   timeStamp,
+  getTotalFileNum,
 };
