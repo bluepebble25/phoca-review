@@ -32,7 +32,7 @@ function readCards(dir, page, size) {
   files.sort((a, b) => {
     return parseInt(a.split('-')[0]) - parseInt(b.split('-')[0]); // 오름차순 정렬
   });
-  const fileList = files.splice((page - 1) * 36, size);
+  const fileList = files.splice((page - 1) * size, size);
 
   const cards = fileList.map((file) => JSON.parse(fs.readFileSync(dir + file)));
   return cards;
