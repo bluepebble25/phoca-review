@@ -23,12 +23,10 @@ interface CardDetailProps {
     gradient?: string;
   };
   image: {
-    url: string;
-    translate: Array<Number>;
+    filename: string;
   };
-  text: {
+  font: {
     color: string;
-    size?: string;
   };
 }
 
@@ -37,9 +35,19 @@ function Paper({ cardList, zIndex, isFlipped }: PaperInfoProps) {
     <div css={paperStyle(zIndex, isFlipped)}>
       <div css={pageStyle('front')}>
         <div css={contentStyle}>
-          {cardList[0].map((card, i) => {
+          {cardList[0].map((card) => {
             return (
-              <CardUI key={card.id} title={card.title} author={card.author} />
+              <CardUI
+                key={card.id}
+                title={card.title}
+                author={card.author}
+                image={
+                  card.front.image &&
+                  card.front.image.filename &&
+                  `http://localhost:5000/uploads/images/${card.front.image.filename}`
+                }
+                background={card.front.background}
+              />
             );
           })}
         </div>
@@ -47,7 +55,7 @@ function Paper({ cardList, zIndex, isFlipped }: PaperInfoProps) {
 
       <div css={pageStyle('back')}>
         <div css={contentStyle}>
-          {cardList[1].map((card, i) => {
+          {cardList[1].map((card) => {
             return (
               <CardUI key={card.id} title={card.title} author={card.author} />
             );

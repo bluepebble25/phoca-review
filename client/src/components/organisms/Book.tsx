@@ -4,7 +4,7 @@ import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import ArrowButton from '../atoms/ArrowButton';
 import Cover from '../molecules/Cover';
 import Paper from './Paper';
-import data from '../../data/dummydata';
+import CardApi from '../../_lib/api/CardApi';
 
 function Book() {
   const [cardList, setCardList] = useState<any[]>([]);
@@ -12,39 +12,49 @@ function Book() {
   const [isBookOpen, setIsBookOpen] = useState(false);
   const [isCoversFlipped, setIsCoversFlipped] = useState([false, false]);
   const cardPerPage = 4; // 한 페이지당 보여지는 카드의 수
-  const totalCardNum = 19;
-  // let numOfPapers = Math.ceil(totalCardNum / (cardPerPage * 2));
-  let numOfPapers = 3;
-  let maxLocation = numOfPapers + 2;
+
+  const [totalCardNum, setTotalCardNum] = useState(-1);
+  const [numOfPapers, setNumOfPapers] = useState(0);
+  const [maxLocation, setMaxLocation] = useState(0);
 
   useEffect(() => {
-    fetchCards();
+    fetchCards(1);
   }, []);
 
-  const fetchCards = () => {
-    let fetchedCards = data.slice(0, 19);
-    let splitedResult: any = [];
-    // 나중에는 {page: 1, cards: [{},{},...]} 식으로 미리 8개 단위로 쪼갠 데이터를 보내도록 서버 코드를 바꿔야겠음
-    for (let i = 1; i <= numOfPapers; i++) {
+  const fetchCards = async (page: number) => {
+    const res = await CardApi.getAllCards(page);
+    let fetchedCards = res.data.results; // 최대 32개의 카드 데이터
+    let totalCard = parseInt(res.headers['x-total-count']!);
+
+    let totalPage = 0;
+
+    if (totalCard !== totalCardNum) {
+      totalPage = Math.ceil(totalCard / (cardPerPage * 2));
+      setTotalCardNum(totalCard);
+      setNumOfPapers(totalPage);
+      setMaxLocation(totalPage + 2);
+    }
+
+    let newPapersNum = Math.ceil(fetchedCards.length / (cardPerPage * 2));
+    let splitedCards = [];
+
+    for (let i = 1; i <= newPapersNum; i++) {
       let chunkPerPaper = {
-        page: i,
+        paper: cardList.length + i,
         isFlipped: false,
-        zIndex: numOfPapers - i + 1,
+        zIndex: numOfPapers - cardList.length - i + 1,
         cardData: [
           fetchedCards.slice(
             (i - 1) * cardPerPage * 2,
             (i - 1) * cardPerPage * 2 + 4
           ),
-          fetchedCards.slice(
-            i * cardPerPage * 2 - cardPerPage,
-            i * cardPerPage * 2
-          ),
+          fetchedCards.slice((i * 2 - 1) * cardPerPage, i * cardPerPage * 2),
         ],
       };
-      splitedResult.push(chunkPerPaper);
+      splitedCards.push(chunkPerPaper);
     }
-    console.log('splitedResult', splitedResult);
-    setCardList(splitedResult);
+
+    setCardList([...cardList, ...splitedCards]);
   };
 
   const onClickNextButton = () => {
@@ -65,8 +75,8 @@ function Book() {
         setIsCoversFlipped([isCoversFlipped[0], !isCoversFlipped[1]]);
       } else {
         const toggledArr = cardList.map((cards) =>
-          cards.page === location
-            ? { ...cards, isFlipped: !cards.isFlipped, zIndex: location }
+          cards.paper === location
+            ? { ...cards, isFlipped: !cards.isFlipped, zIndex: -cards.zIndex }
             : cards
         );
         setCardList(toggledArr);
@@ -85,8 +95,8 @@ function Book() {
         setIsCoversFlipped([isCoversFlipped[0], !isCoversFlipped[1]]);
       } else {
         const toggledArr = cardList.map((cards) =>
-          cards.page === location - 1
-            ? { ...cards, isFlipped: !cards.isFlipped, zIndex: -cards.page }
+          cards.paper === location - 1
+            ? { ...cards, isFlipped: !cards.isFlipped, zIndex: -cards.zIndex }
             : cards
         );
         setCardList(toggledArr);
@@ -108,10 +118,10 @@ function Book() {
       <div css={sceneStyle}>
         <div css={bookStyle(isBookOpen, isCoversFlipped[1])}>
           <Cover order="first" isFlipped={isCoversFlipped[0]} />
-          {cardList.map((cards, i) => {
+          {cardList.map((cards) => {
             return (
               <Paper
-                key={cards.page}
+                key={cards.paper}
                 cardList={cards.cardData}
                 isFlipped={cards.isFlipped}
                 zIndex={cards.zIndex}

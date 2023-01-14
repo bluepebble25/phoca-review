@@ -6,13 +6,16 @@ interface Props {
   author: string;
   front?: object;
   image?: string;
-  background?: string;
+  background?: {
+    color?: string;
+    gradient?: string;
+  };
 }
 
 function CardUI({ title, content, author, image, background }: Props) {
   return (
     <div css={cardUIStyle}>
-      <img src="" alt="" css={imgStyle} />
+      <img src={image} alt="" css={imgStyle} />
       <div css={contentStyle}>
         <h2 css={titleStyle}>{title}</h2>
         <p css={authorStyle}>{author}</p>
