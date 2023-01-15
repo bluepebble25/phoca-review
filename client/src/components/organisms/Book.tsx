@@ -21,15 +21,31 @@ function Book() {
     fetchCards(1);
   }, []);
 
+  useEffect(() => {
+    // 만약 장(paper) 번호가 4의 배수이고, 마지막 페이지가 아니며, 다음 페이지에 해당하는 데이터가 아직 안불려온 경우 fetch
+    // (종이의 수가 4의 배수라는 것은 API에서 한번에 오는 데이터의 크기인 32를 cardPerPage * 2로 나눈 값)
+    if (
+      cardList.length % 4 === 0 &&
+      cardList.length !== numOfPapers &&
+      cardList.length === location
+    ) {
+      fetchCards(location / 2);
+    }
+  }, [location]);
+
+  console.log(cardList);
+  console.log('location', location);
+  console.log('numOfPapers', numOfPapers);
+  console.log('maxLocation', maxLocation);
+
   const fetchCards = async (page: number) => {
     const res = await CardApi.getAllCards(page);
     let fetchedCards = res.data.results; // 최대 32개의 카드 데이터
     let totalCard = parseInt(res.headers['x-total-count']!);
 
-    let totalPage = 0;
+    let totalPage = Math.ceil(totalCard / (cardPerPage * 2));
 
     if (totalCard !== totalCardNum) {
-      totalPage = Math.ceil(totalCard / (cardPerPage * 2));
       setTotalCardNum(totalCard);
       setNumOfPapers(totalPage);
       setMaxLocation(totalPage + 2);
@@ -42,7 +58,7 @@ function Book() {
       let chunkPerPaper = {
         paper: cardList.length + i,
         isFlipped: false,
-        zIndex: numOfPapers - cardList.length - i + 1,
+        zIndex: totalPage - cardList.length - i + 1,
         cardData: [
           fetchedCards.slice(
             (i - 1) * cardPerPage * 2,
@@ -53,7 +69,6 @@ function Book() {
       };
       splitedCards.push(chunkPerPaper);
     }
-
     setCardList([...cardList, ...splitedCards]);
   };
 
@@ -73,13 +88,22 @@ function Book() {
       } else if (location === numOfPapers + 1) {
         setIsBookOpen(false);
         setIsCoversFlipped([isCoversFlipped[0], !isCoversFlipped[1]]);
+      } else if (
+        cardList.length % 4 === 0 &&
+        cardList.length !== numOfPapers &&
+        cardList.length === location
+      ) {
+        fetchCards(location / 2);
       } else {
-        const toggledArr = cardList.map((cards) =>
-          cards.paper === location
-            ? { ...cards, isFlipped: !cards.isFlipped, zIndex: -cards.zIndex }
-            : cards
-        );
-        setCardList(toggledArr);
+        // 페이지 넘기는 함수
+        const toggleArr = () => {
+          return cardList.map((cards) =>
+            cards.paper === location
+              ? { ...cards, isFlipped: !cards.isFlipped, zIndex: -cards.zIndex }
+              : cards
+          );
+        };
+        setCardList(toggleArr());
       }
       setLocation(location + 1);
     }

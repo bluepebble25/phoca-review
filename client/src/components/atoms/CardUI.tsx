@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 
 interface Props {
-  title: string;
+  title: number;
   content?: string;
   author: string;
   front?: object;

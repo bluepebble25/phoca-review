@@ -39,7 +39,7 @@ function Paper({ cardList, zIndex, isFlipped }: PaperInfoProps) {
             return (
               <CardUI
                 key={card.id}
-                title={card.title}
+                title={card.id}
                 author={card.author}
                 image={
                   card.front.image &&
@@ -57,7 +57,7 @@ function Paper({ cardList, zIndex, isFlipped }: PaperInfoProps) {
         <div css={contentStyle}>
           {cardList[1].map((card) => {
             return (
-              <CardUI key={card.id} title={card.title} author={card.author} />
+              <CardUI key={card.id} title={card.id} author={card.author} />
             );
           })}
         </div>
