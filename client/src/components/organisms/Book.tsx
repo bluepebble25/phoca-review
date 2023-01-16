@@ -29,14 +29,9 @@ function Book() {
       cardList.length !== numOfPapers &&
       cardList.length === location
     ) {
-      fetchCards(location / 2);
+      fetchCards(location / 4 + 1);
     }
   }, [location]);
-
-  console.log(cardList);
-  console.log('location', location);
-  console.log('numOfPapers', numOfPapers);
-  console.log('maxLocation', maxLocation);
 
   const fetchCards = async (page: number) => {
     const res = await CardApi.getAllCards(page);
