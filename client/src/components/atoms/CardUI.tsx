@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { colorPalette, gradient } from '../../_lib/styles/colorPalette';
+import { shadow } from '../../_lib/styles/effectPalette';
 
 interface Props {
   title: string;
@@ -43,7 +44,7 @@ function CardUI({ title, content, author, imageUrl, background, font }: Props) {
     } else if (background && background.gradient) {
       setBgStyle({ value: gradient[background.gradient], type: 'gradient' });
     }
-  }, [background, bgStyle]);
+  }, [background]);
 
   return (
     <div css={cardUIStyle}>
@@ -63,6 +64,7 @@ const cardUIStyle = css`
   border-radius: 10px;
   background-color: #d9d9d9;
   overflow: hidden;
+  box-shadow: ${shadow.dropShadow};
 `;
 
 const imgStyle = css`
@@ -82,10 +84,19 @@ const contentStyle = ({ value, type }: bgStyleProps, font: FontProps) => css`
 `;
 
 const titleStyle = css`
-  font-size: 18px;
-  max-width: 100px;
+  font-size: 14px;
+  max-width: 110px;
+  margin: 10px;
+  word-break: keep-all;
+  word-wrap: break-word;
 `;
 
-const authorStyle = css``;
+const authorStyle = css`
+  font-size: 12px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  max-width: 120px;
+`;
 
 export default CardUI;
