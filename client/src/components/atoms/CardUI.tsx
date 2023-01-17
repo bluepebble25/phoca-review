@@ -6,8 +6,8 @@ interface Props {
   title: string;
   content?: string;
   author: string;
-  front?: object;
-  image?: string;
+  font: FontProps;
+  imageUrl?: string;
   background?: {
     color?: string;
     gradient?: string;
@@ -19,7 +19,11 @@ interface bgStyleProps {
   type: 'color' | 'gradient' | 'none';
 }
 
-function CardUI({ title, content, author, image, background }: Props) {
+interface FontProps {
+  color: string;
+}
+
+function CardUI({ title, content, author, imageUrl, background, font }: Props) {
   const [bgStyle, setBgStyle] = useState<bgStyleProps>({
     value: '',
     type: 'none',
@@ -39,15 +43,12 @@ function CardUI({ title, content, author, image, background }: Props) {
     } else if (background && background.gradient) {
       setBgStyle({ value: gradient[background.gradient], type: 'gradient' });
     }
-  }, []);
-  if (background && background.gradient) {
-    console.log(title, background && background.gradient, bgStyle);
-  }
+  }, [background, bgStyle]);
 
   return (
     <div css={cardUIStyle}>
-      <img src={image} alt="" css={imgStyle} />
-      <div css={contentStyle(bgStyle)}>
+      <img src={imageUrl} alt="" css={imgStyle} />
+      <div css={contentStyle(bgStyle, font)}>
         <h2 css={titleStyle}>{title}</h2>
         <p css={authorStyle}>{author}</p>
       </div>
@@ -71,12 +72,13 @@ const imgStyle = css`
   object-fit: cover;
 `;
 
-const contentStyle = ({ value, type }: bgStyleProps) => css`
+const contentStyle = ({ value, type }: bgStyleProps, font: FontProps) => css`
   position: absolute;
   width: 100%;
   height: 100%;
   ${type === 'color' && 'background-color:' + value + ';'}
   ${type === 'gradient' && 'background:' + value + ';'}
+  color: ${font.color};
 `;
 
 const titleStyle = css`

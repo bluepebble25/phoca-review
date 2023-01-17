@@ -41,12 +41,13 @@ function Paper({ cardList, zIndex, isFlipped }: PaperInfoProps) {
                 key={card.id}
                 title={card.title}
                 author={card.author}
-                image={
+                imageUrl={
                   card.front.image &&
                   card.front.image.filename &&
                   `http://localhost:5000/uploads/images/${card.front.image.filename}`
                 }
                 background={card.front.background}
+                font={card.front.font}
               />
             );
           })}
@@ -57,7 +58,18 @@ function Paper({ cardList, zIndex, isFlipped }: PaperInfoProps) {
         <div css={contentStyle}>
           {cardList[1].map((card) => {
             return (
-              <CardUI key={card.id} title={card.title} author={card.author} />
+              <CardUI
+                key={card.id}
+                title={card.title}
+                author={card.author}
+                imageUrl={
+                  card.front.image &&
+                  card.front.image.filename &&
+                  `http://localhost:5000/uploads/images/${card.front.image.filename}`
+                }
+                background={card.front.background}
+                font={card.front.font}
+              />
             );
           })}
         </div>
