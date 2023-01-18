@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { colorPalette, gradient } from '../../_lib/styles/colorPalette';
 import { shadow } from '../../_lib/styles/effectPalette';
@@ -24,7 +25,7 @@ interface FontProps {
   color: string;
 }
 
-function CardUI({ title, content, author, imageUrl, background, font }: Props) {
+function CardUI({ title, author, imageUrl, background, font }: Props) {
   const [bgStyle, setBgStyle] = useState<bgStyleProps>({
     value: '',
     type: 'none',
@@ -99,4 +100,4 @@ const authorStyle = css`
   max-width: 120px;
 `;
 
-export default CardUI;
+export default React.memo(CardUI);
