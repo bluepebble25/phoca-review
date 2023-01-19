@@ -1,5 +1,4 @@
 import { css } from '@emotion/react';
-import { Link } from 'react-router-dom';
 import CardUI from '../atoms/CardUI';
 
 interface PaperInfoProps {

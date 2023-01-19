@@ -14,6 +14,8 @@ const colorPalette: colorPaletteProps = {
   blue: '#59BACC',
   green: '#58AD69',
   yellow: '#FFD749',
+  orangeYellow: '#FFBC49',
+  darkgray: '#545454',
 };
 
 const gradient: gradientProps = {
