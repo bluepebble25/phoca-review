@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+import { Link } from 'react-router-dom';
 import CardUI from '../atoms/CardUI';
 
 interface PaperInfoProps {
@@ -39,6 +40,8 @@ function Paper({ cardList, zIndex, isFlipped }: PaperInfoProps) {
             return (
               <CardUI
                 key={card.id}
+                link={`/cards/${card.id}`}
+                id={card.id}
                 title={card.title}
                 author={card.author}
                 imageUrl={
@@ -60,6 +63,8 @@ function Paper({ cardList, zIndex, isFlipped }: PaperInfoProps) {
             return (
               <CardUI
                 key={card.id}
+                link={`/cards/${card.id}`}
+                id={card.id}
                 title={card.title}
                 author={card.author}
                 imageUrl={

@@ -1,10 +1,13 @@
 import { css } from '@emotion/react';
 import React from 'react';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { colorPalette, gradient } from '../../_lib/styles/colorPalette';
 import { shadow } from '../../_lib/styles/effectPalette';
 
 interface Props {
+  link?: string;
+  id: number;
   title: string;
   content?: string;
   author: string;
@@ -25,7 +28,15 @@ interface FontProps {
   color: string;
 }
 
-function CardUI({ title, author, imageUrl, background, font }: Props) {
+function CardUI({
+  link,
+  id,
+  title,
+  author,
+  imageUrl,
+  background,
+  font,
+}: Props) {
   const [bgStyle, setBgStyle] = useState<bgStyleProps>({
     value: '',
     type: 'none',
@@ -47,7 +58,17 @@ function CardUI({ title, author, imageUrl, background, font }: Props) {
     }
   }, [background]);
 
-  return (
+  return link ? (
+    <Link to={`/cards/${id}`}>
+      <div css={cardUIStyle}>
+        <img src={imageUrl} alt="" css={imgStyle} />
+        <div css={contentStyle(bgStyle, font)}>
+          <h2 css={titleStyle}>{title}</h2>
+          <p css={authorStyle}>{author}</p>
+        </div>
+      </div>
+    </Link>
+  ) : (
     <div css={cardUIStyle}>
       <img src={imageUrl} alt="" css={imgStyle} />
       <div css={contentStyle(bgStyle, font)}>

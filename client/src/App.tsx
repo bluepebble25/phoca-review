@@ -15,12 +15,21 @@ const MainLayout = () => {
   );
 };
 
+const BookPageLayout = () => {
+  return (
+    <>
+      <BookPage />
+      <Outlet />
+    </>
+  );
+};
+
 function App() {
   return (
     <Routes>
       <Route element={<MainLayout />}>
         <Route index element={<Navigate to="/cards" />} />
-        <Route path="/cards" element={<BookPage />}>
+        <Route path="/cards" element={<BookPageLayout />}>
           <Route path="/cards/:id" element={<CardDetailPage />} />
         </Route>
       </Route>
