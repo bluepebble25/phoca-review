@@ -14,9 +14,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import { colorPalette } from '../_lib/styles/colorPalette';
+import FlipButton from '../components/atoms/Buttons/FlipButton';
 
 function CardDetailPage() {
   const [card, setCard] = useState<any>();
+  const [isCardFront, setIsCardFront] = useState(true);
+  const [isFlipShown, setIsFlipShown] = useState(false);
   const params = useParams();
   const id = parseInt(params.id!);
 
@@ -36,11 +39,22 @@ function CardDetailPage() {
     return custom;
   };
 
+  const onClickCardToggle = () => {
+    setIsCardFront(!isCardFront);
+  };
+
+  const onMouseEnterCard = () => {
+    setIsFlipShown(true);
+  };
+
+  const onMouseLeaveCard = () => {
+    setIsFlipShown(false);
+  };
+
   const fetchCard = async (id: number) => {
     const data = (await CardApi.getCard(id)).data;
     const { title, author, front, back } = data;
     const cardCustom = [getCustom(front), getCustom(back)];
-
     const card = {
       cardInfo: {
         title: title,
@@ -57,7 +71,7 @@ function CardDetailPage() {
       },
       cardCustomBack: {
         type: cardCustom[1].type,
-        value: cardCustom[1].type,
+        value: cardCustom[1].value,
         fontColor: back.font.color,
       },
     };
@@ -80,13 +94,23 @@ function CardDetailPage() {
       <div css={containerStyle}>
         <Dimmed />
         <div css={modalStyle}>
-          <Card
-            cardCustomFront={card.cardCustomFront}
-            cardCustomBack={card.cardCustomBack}
-            cardInfo={card.cardInfo}
-            cardContents={card.cardContents}
-            isCardFront={true}
-          />
+          <div
+            css={cardAreaStyle}
+            onMouseEnter={onMouseEnterCard}
+            onMouseLeave={onMouseLeaveCard}
+          >
+            <div css={flipBtnWrapperStyle(isFlipShown)}>
+              <FlipButton buttonSize={35} onClick={onClickCardToggle} />
+            </div>
+
+            <Card
+              cardCustomFront={card.cardCustomFront}
+              cardCustomBack={card.cardCustomBack}
+              cardInfo={card.cardInfo}
+              cardContents={card.cardContents}
+              isCardFront={isCardFront}
+            />
+          </div>
 
           <div css={buttonGroupStyle}>
             <CircleButton size="46px" color={colorPalette.red}>
@@ -136,6 +160,10 @@ const modalStyle = css`
   gap: 23px;
 `;
 
+const cardAreaStyle = css`
+  position: relative;
+`;
+
 const buttonGroupStyle = css`
   display: flex;
   justify-content: space-between;
@@ -144,6 +172,15 @@ const buttonGroupStyle = css`
 const rightGroupStyle = css`
   display: flex;
   gap: 16px;
+`;
+
+const flipBtnWrapperStyle = (isFlipShown: boolean) => css`
+  display: ${isFlipShown ? 'block' : 'none'};
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
 `;
 
 export default CardDetailPage;
