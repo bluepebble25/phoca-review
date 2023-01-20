@@ -8,6 +8,11 @@ class CardApi {
     return res;
   }
 
+  static async getCard(id: number) {
+    const res = await axios.get(`/cards/${id}`);
+    return res;
+  }
+
   static async createCard(formData: FormData) {
     const res = await axios
       .post('/cards', formData, {
