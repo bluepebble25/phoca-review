@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, RefObject } from 'react';
 import CardApi from '../_lib/api/CardApi';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import Dimmed from '../components/atoms/Dimmed';
 import Card from '../components/atoms/Card';
@@ -15,6 +15,7 @@ import {
 
 import { colorPalette } from '../_lib/styles/colorPalette';
 import FlipButton from '../components/atoms/Buttons/FlipButton';
+import useOnClickOutside from '../hooks/useOnClickOutside';
 
 function CardDetailPage() {
   const [card, setCard] = useState<any>();
@@ -22,6 +23,12 @@ function CardDetailPage() {
   const [isFlipShown, setIsFlipShown] = useState(false);
   const params = useParams();
   const id = parseInt(params.id!);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const goBack = () => {
+    navigate('/cards');
+  };
+  useOnClickOutside(modalRef, goBack);
 
   const getCustom = (cardSide: any) => {
     let custom = { type: '', value: '' };
@@ -93,7 +100,7 @@ function CardDetailPage() {
     return (
       <div css={containerStyle}>
         <Dimmed />
-        <div css={modalStyle}>
+        <div css={modalStyle} ref={modalRef}>
           <div
             css={cardAreaStyle}
             onMouseEnter={onMouseEnterCard}
