@@ -1,6 +1,5 @@
 import { css } from '@emotion/react';
-import { useEffect, useState, useRef, RefObject } from 'react';
-import CardApi from '../_lib/api/CardApi';
+import { useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import Dimmed from '../components/atoms/Dimmed';
@@ -15,12 +14,13 @@ import {
 
 import { colorPalette } from '../_lib/styles/colorPalette';
 import FlipButton from '../components/atoms/Buttons/FlipButton';
+import useFetchCard from '../hooks/useFetchCard';
 import useOnClickOutside from '../hooks/useOnClickOutside';
 
 function CardDetailPage() {
-  const [card, setCard] = useState<any>();
   const [isCardFront, setIsCardFront] = useState(true);
   const [isFlipShown, setIsFlipShown] = useState(false);
+
   const params = useParams();
   const id = parseInt(params.id!);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -28,23 +28,9 @@ function CardDetailPage() {
   const goBack = () => {
     navigate('/cards');
   };
-  useOnClickOutside(modalRef, goBack);
 
-  const getCustom = (cardSide: any) => {
-    let custom = { type: '', value: '' };
-    const background = cardSide.background;
-    if (cardSide.background) {
-      custom = background.color
-        ? { type: 'color', value: background.color }
-        : { type: 'gradient', value: background.gradient };
-    } else if (cardSide.image) {
-      custom = {
-        type: 'image',
-        value: `http://localhost:5000/uploads/images/${cardSide.image.filename}`,
-      };
-    }
-    return custom;
-  };
+  const card = useFetchCard(id);
+  useOnClickOutside(modalRef, goBack);
 
   const onClickCardToggle = () => {
     setIsCardFront(!isCardFront);
@@ -57,38 +43,6 @@ function CardDetailPage() {
   const onMouseLeaveCard = () => {
     setIsFlipShown(false);
   };
-
-  const fetchCard = async (id: number) => {
-    const data = (await CardApi.getCard(id)).data;
-    const { title, author, front, back } = data;
-    const cardCustom = [getCustom(front), getCustom(back)];
-    const card = {
-      cardInfo: {
-        title: title,
-        author: author,
-      },
-      cardContents: {
-        front: front.content,
-        back: back.content,
-      },
-      cardCustomFront: {
-        type: cardCustom[0].type,
-        value: cardCustom[0].value,
-        fontColor: front.font.color,
-      },
-      cardCustomBack: {
-        type: cardCustom[1].type,
-        value: cardCustom[1].value,
-        fontColor: back.font.color,
-      },
-    };
-
-    setCard(card);
-  };
-
-  useEffect(() => {
-    fetchCard(id);
-  }, []);
 
   if (!card) {
     return (
