@@ -7,6 +7,7 @@ import Logo from '../components/atoms/Logo';
 import CardPreview from '../components/molecules/CardPreview';
 import CardOptionList from '../components/organisms/CardOptionList';
 import CardApi from '../_lib/api/CardApi';
+import Card from '../_lib/dto/Card';
 import { colorPalette } from '../_lib/styles/colorPalette';
 
 function CreateCardPage() {
@@ -50,42 +51,14 @@ function CreateCardPage() {
       formData.append('file', cardCustomFront.file);
     }
 
-    let data = {
-      title: cardInfo.title,
-      author: cardInfo.author,
-      front: {
-        content: cardContents.front ? cardContents.front : '',
-        ...(cardCustomFront.type === 'color' && {
-          background: {
-            color: cardCustomFront.value,
-          },
-        }),
-        ...(cardCustomFront.type === 'gradient' && {
-          background: {
-            gradient: cardCustomFront.value,
-          },
-        }),
-        ...(cardCustomFront.type === 'image' && {
-          image: { filename: cardCustomFront.file.name },
-        }),
-        font: { color: cardCustomFront.fontColor },
-      },
-      back: {
-        content: cardContents.back ? cardContents.back : '',
-        ...(cardCustomBack.type === 'color' && {
-          background: { color: cardCustomBack.value },
-        }),
-        ...(cardCustomBack.type === 'gradient' && {
-          background: {
-            gradient: cardCustomBack.value,
-          },
-        }),
-        ...(cardCustomBack.type === 'image' && {
-          image: { filename: cardCustomBack.file.name },
-        }),
-        font: { color: cardCustomBack.fontColor },
-      },
-    };
+    const card = new Card({
+      ...cardInfo,
+      cardContents,
+      cardCustomFront,
+      cardCustomBack,
+    });
+    const data = card.genSubmitData();
+
     formData.append('data', JSON.stringify(data));
 
     CardApi.createCard(formData);
