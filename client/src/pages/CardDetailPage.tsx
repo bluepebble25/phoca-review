@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { useState, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 
 import Dimmed from '../components/atoms/Dimmed';
 import Card from '../components/atoms/Card';
@@ -89,13 +89,15 @@ function CardDetailPage() {
                   color={colorPalette.white}
                 />
               </CircleButton>
-              <CircleButton size="46px" color={colorPalette.orangeYellow}>
-                <FontAwesomeIcon
-                  icon={faPen}
-                  fontSize="24px"
-                  color={colorPalette.white}
-                />
-              </CircleButton>
+              <Link to={`/edit/cards/${id}`}>
+                <CircleButton size="46px" color={colorPalette.orangeYellow}>
+                  <FontAwesomeIcon
+                    icon={faPen}
+                    fontSize="24px"
+                    color={colorPalette.white}
+                  />
+                </CircleButton>
+              </Link>
             </div>
           </div>
         </div>

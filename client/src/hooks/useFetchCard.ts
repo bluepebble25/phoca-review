@@ -4,7 +4,7 @@ import CardApi from '../_lib/api/CardApi';
 const getCustom = (cardSide: any) => {
   let custom = { type: '', value: '' };
   const background = cardSide.background;
-  if (cardSide.background) {
+  if (background) {
     custom = background.color
       ? { type: 'color', value: background.color }
       : { type: 'gradient', value: background.gradient };
@@ -17,10 +17,11 @@ const getCustom = (cardSide: any) => {
   return custom;
 };
 
-const useFetchCard = (id: number) => {
+const useFetchCard = (id: number | null) => {
   const [card, setCard] = useState<any>();
 
   useEffect(() => {
+    if (!id) return;
     const fetchCard = async (id: number) => {
       const data = (await CardApi.getCard(id)).data;
       const { title, author, front, back } = data;
@@ -38,11 +39,17 @@ const useFetchCard = (id: number) => {
           type: cardCustom[0].type,
           value: cardCustom[0].value,
           fontColor: front.font.color,
+          ...(cardCustom[0].type === 'image' && {
+            file: new File([], front.image.filename),
+          }),
         },
         cardCustomBack: {
           type: cardCustom[1].type,
           value: cardCustom[1].value,
           fontColor: back.font.color,
+          ...(cardCustom[1].type === 'image' && {
+            file: new File([], back.image.filename),
+          }),
         },
       };
       setCard(cardData);

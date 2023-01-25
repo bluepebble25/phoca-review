@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import Button from '../components/atoms/Buttons/Button';
 import Input from '../components/atoms/Input/Input';
 import TextArea from '../components/atoms/Input/TextArea';
@@ -7,10 +8,15 @@ import Logo from '../components/atoms/Logo';
 import CardPreview from '../components/molecules/CardPreview';
 import CardOptionList from '../components/organisms/CardOptionList';
 import CardApi from '../_lib/api/CardApi';
+import useFetchCard from '../hooks/useFetchCard';
 import Card from '../_lib/dto/Card';
 import { colorPalette } from '../_lib/styles/colorPalette';
 
-function CreateCardPage() {
+interface PageProps {
+  isEditPage?: boolean;
+}
+
+function CreateCardPage({ isEditPage }: PageProps) {
   const [isCardFront, setIsCardFront] = useState(true);
   const [cardInfo, setCardInfo] = useState({
     title: '',
@@ -30,11 +36,23 @@ function CreateCardPage() {
     type: 'color',
     value: colorPalette.white,
     fontColor: 'black',
-    file: new File([], 'file1'),
+    file: new File([], 'file2'),
   });
 
   const maxLength = { title: 60, author: 24, contents: 340 };
   const inputColorRef = useRef<HTMLInputElement>(null); // 무지개빛 이미지를 클릭하면 원격으로 <input type="color"/>를 클릭하기 위한 속성
+  const params = useParams();
+  const id = isEditPage && params.id ? parseInt(params.id) : null;
+  const card = useFetchCard(id);
+
+  useEffect(() => {
+    if (isEditPage && card) {
+      setCardInfo({ ...card.cardInfo });
+      setCardContents({ ...card.cardContents });
+      setCardCustomFront({ ...cardCustomFront, ...card.cardCustomFront });
+      setCardCustomBack({ ...cardCustomBack, ...card.cardCustomBack });
+    }
+  }, [card]);
 
   const onClickSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,10 +63,14 @@ function CreateCardPage() {
     }
     const formData = new FormData();
     if (cardCustomFront.type === 'image') {
-      formData.append('file', cardCustomFront.file);
+      if (cardCustomFront.file.size !== 0) {
+        formData.append('file', cardCustomFront.file);
+      }
     }
     if (cardCustomBack.type === 'image') {
-      formData.append('file', cardCustomFront.file);
+      if (cardCustomBack.file.size !== 0) {
+        formData.append('file', cardCustomBack.file);
+      }
     }
 
     const card = new Card({

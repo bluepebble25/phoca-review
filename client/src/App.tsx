@@ -34,7 +34,7 @@ function App() {
         </Route>
       </Route>
       <Route path="/create" element={<CreateCardPage />} />
-      <Route path="/edit" element={<EditCardPage />} />
+      <Route path="/edit/cards/:id" element={<CreateCardPage isEditPage />} />
     </Routes>
   );
 }
