@@ -83,7 +83,11 @@ function CreateCardPage({ isEditPage }: PageProps) {
 
     formData.append('data', JSON.stringify(data));
 
-    CardApi.createCard(formData);
+    if (isEditPage) {
+      CardApi.updateCard(id!, formData);
+    } else {
+      CardApi.createCard(formData);
+    }
   };
 
   const onChangeCardInfo = (e: React.ChangeEvent<HTMLInputElement>) => {

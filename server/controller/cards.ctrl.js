@@ -59,7 +59,6 @@ const getCard = (req, res) => {
 
 const createCard = (req, res) => {
   try {
-    console.log(req.body.data);
     let card = JSON.parse(req.body.data);
 
     const isValid = ajv.validate(CardSchema, card);
@@ -171,11 +170,9 @@ const updateCard = (req, res) => {
       if (!req.files || (Array.isArray(req.files) && req.files.length === 0)) {
         for (let i = 0; i < prevImages.length; i++) {
           // 원래 filename 있었는데 새로받은 filename이 빈칸인 경우 (삭제)
-          if (
-            prevImages[i].filename !== '' &&
-            currentImages[i].filename === ''
-          ) {
-            deleteFile(prevImages[i].filename);
+          if (prevImages[i] && !currentImages[i]) {
+            console.log(prevImages[i].filename, '삭제');
+            deleteFile('uploads/images/' + prevImages[i].filename);
           }
         }
       } else {
@@ -192,35 +189,46 @@ const updateCard = (req, res) => {
       */
         if (req.files.length === 1) {
           for (let i = 0; i < prevImages.length; i++) {
-            if (prevImages[i].filename !== currentImages[i].filename) {
-              // 이전에 이미지가 있었다면 지우고
-              if (prevImages[i].filename !== '') {
-                deleteFile('uploads/images/' + prevImages[i].filename);
-              }
-              // 업데이트된 이미지가 있다면 교체한다
-              if (currentImages[i].filename !== '') {
-                currentImages[i].filename = req.files[0].filename;
-              }
+            if (!prevImages[i] && currentImages[i]) {
+              // X -> O 새로 생겼음 - image.filename 항목 추가
+              currentImages[i].filename = req.files[0].filename;
+            } else if (
+              prevImages[i] &&
+              currentImages[i] &&
+              prevImages[i].filename !== currentImages[i].filename
+            ) {
+              // O -> O(새 이미지로 변경) - 기존 것 삭제 후 image.filename 교체
+              deleteFile('uploads/images/' + prevImages[i].filename);
+              currentImages[i].filename = req.files[0].filename;
+            } else if (prevImages[i] && !currentImages[i]) {
+              // O -> X - 이미지 있다가 없어짐 - 기존 것 삭제
+              deleteFile('uploads/images/' + prevImages[i].filename);
             }
           }
         } else {
           // 이미지 파일 2개 받았을 때
-          // 둘 다 삭제후 req.files[0], [1] 차례대로 current에 대입
-          prevImages.forEach((img) => {
-            deleteFile(img.filename);
-          });
+          // 기존에 이미지 있다면 둘 다 삭제후 req.files[0], [1] 차례대로 current에 대입
           for (let i = 0; i < prevImages.length; i++) {
+            prevImages[i] &&
+              deleteFile('uploads/images/' + prevImages[i].filename);
             currentImages[i].filename = req.files[i].filename;
           }
         }
       }
 
-      fs.writeFileSync(`uploads/card_info/${filename}`, JSON.stringify(card));
+      const updateResult = Object.assign(savedInfo, card);
 
-      if (savedInfo.title !== card.title) {
+      fs.writeFileSync(
+        `uploads/card_info/${filename}`,
+        JSON.stringify(updateResult)
+      );
+
+      if (filename !== updateResult.title) {
         fs.renameSync(
           `uploads/card_info/${filename}`,
-          `uploads/card_info/${filename.split('-')[0]}-${card.title}.json`
+          `uploads/card_info/${filename.split('-')[0]}-${
+            updateResult.title
+          }.json`
         );
       }
     }
