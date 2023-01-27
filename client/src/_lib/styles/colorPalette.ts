@@ -16,6 +16,9 @@ const colorPalette: colorPaletteProps = {
   yellow: '#FFD749',
   orangeYellow: '#FFBC49',
   darkgray: '#545454',
+  lightgray: '#C3CAD9',
+  lightestgray: '#F5F6F7',
+  alertText: '#4D5E80',
 };
 
 const gradient: gradientProps = {

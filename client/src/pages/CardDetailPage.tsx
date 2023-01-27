@@ -16,6 +16,7 @@ import { colorPalette } from '../_lib/styles/colorPalette';
 import FlipButton from '../components/atoms/Buttons/FlipButton';
 import useFetchCard from '../hooks/useFetchCard';
 import useOnClickOutside from '../hooks/useOnClickOutside';
+import ConfirmModal from '../components/molecules/ConfirmModal';
 
 function CardDetailPage() {
   const [isCardFront, setIsCardFront] = useState(true);
@@ -54,6 +55,13 @@ function CardDetailPage() {
     return (
       <div css={containerStyle}>
         <Dimmed />
+        <ConfirmModal
+          alertText="정말로 카드를 삭제하시겠습니까?"
+          cancleText="취소"
+          okText="삭제"
+          cancleHandler={() => {}}
+          okHandler={() => {}}
+        />
         <div css={modalStyle} ref={modalRef}>
           <div
             css={cardAreaStyle}
