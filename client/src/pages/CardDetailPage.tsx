@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 
 import Dimmed from '../components/atoms/Dimmed';
@@ -21,17 +21,22 @@ import ConfirmModal from '../components/molecules/ConfirmModal';
 function CardDetailPage() {
   const [isCardFront, setIsCardFront] = useState(true);
   const [isFlipShown, setIsFlipShown] = useState(false);
+  const [isModalShown, setIsModalShown] = useState(false);
 
   const params = useParams();
   const id = parseInt(params.id!);
-  const modalRef = useRef<HTMLDivElement>(null);
+  const detailDimmedRef = useRef<HTMLDivElement>(null);
+  const modalDimmedRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const goBack = () => {
     navigate('/cards');
   };
 
   const card = useFetchCard(id);
-  useOnClickOutside(modalRef, goBack);
+  useOnClickOutside(detailDimmedRef, goBack);
+  useOnClickOutside(modalDimmedRef, () => {
+    setIsModalShown(!isModalShown);
+  });
 
   const onClickCardToggle = () => {
     setIsCardFront(!isCardFront);
@@ -48,21 +53,23 @@ function CardDetailPage() {
   if (!card) {
     return (
       <div css={containerStyle}>
-        <Dimmed />
+        <Dimmed detailDimmedRef={detailDimmedRef} />
       </div>
     );
   } else {
     return (
       <div css={containerStyle}>
-        <Dimmed />
+        <Dimmed detailDimmedRef={detailDimmedRef} />
         <ConfirmModal
+          modalDimmedRef={modalDimmedRef}
+          isModalShown={isModalShown}
           alertText="정말로 카드를 삭제하시겠습니까?"
           cancleText="취소"
           okText="삭제"
-          cancleHandler={() => {}}
+          cancleHandler={() => setIsModalShown(false)}
           okHandler={() => {}}
         />
-        <div css={modalStyle} ref={modalRef}>
+        <div css={modalStyle}>
           <div
             css={cardAreaStyle}
             onMouseEnter={onMouseEnterCard}
@@ -82,7 +89,11 @@ function CardDetailPage() {
           </div>
 
           <div css={buttonGroupStyle}>
-            <CircleButton size="46px" color={colorPalette.red}>
+            <CircleButton
+              size="46px"
+              color={colorPalette.red}
+              onClick={() => setIsModalShown(true)}
+            >
               <FontAwesomeIcon
                 icon={faTrashCan}
                 fontSize="24px"

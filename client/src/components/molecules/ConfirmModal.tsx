@@ -1,10 +1,10 @@
 import React from 'react';
 import { css } from '@emotion/react';
 import { colorPalette } from '../../_lib/styles/colorPalette';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
 interface ConfirmModalProps {
+  isModalShown: boolean;
+  modalDimmedRef: React.RefObject<HTMLDivElement>;
   alertText: string;
   cancleText: string;
   okText: string;
@@ -13,6 +13,8 @@ interface ConfirmModalProps {
 }
 
 function ConfirmModal({
+  isModalShown,
+  modalDimmedRef,
   alertText,
   cancleText,
   okText,
@@ -20,7 +22,7 @@ function ConfirmModal({
   okHandler,
 }: ConfirmModalProps) {
   return (
-    <div css={modalWrapper}>
+    <div css={modalWrapper(isModalShown)} ref={modalDimmedRef}>
       <div css={modalStyle}>
         <div css={confirmTextBoxStyle}>
           <span css={comfirmTextStyle}>{alertText}</span>
@@ -39,7 +41,7 @@ function ConfirmModal({
   );
 }
 
-const modalWrapper = css`
+const modalWrapper = (isModalShown: boolean) => css`
   position: absolute;
   z-index: 1;
   display: flex;
@@ -48,7 +50,8 @@ const modalWrapper = css`
   width: 100%;
   height: 100vh;
   top: 0;
-  // background-color: gray;
+  background-color: rgb(0, 0, 0, 0.8);
+  ${!isModalShown && 'display: none;'};
 `;
 
 const modalStyle = css`
@@ -59,17 +62,6 @@ const modalStyle = css`
   background-color: ${colorPalette.white};
   color: ${colorPalette.alertText};
   font-size: 18px;
-`;
-
-const closeBtnStyle = css`
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  padding: 5px;
-  border: none;
-  background-color: transparent;
-  color: ${colorPalette.lightgray};
-  cursor: pointer;
 `;
 
 const confirmTextBoxStyle = css`

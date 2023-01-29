@@ -2,13 +2,18 @@ import { css } from '@emotion/react';
 import { shadow } from '../../../_lib/styles/effectPalette';
 
 interface CircleButtonProps {
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   children?: React.ReactNode;
   size: string;
   color: string;
 }
 
-function CircleButton({ children, size, color }: CircleButtonProps) {
-  return <button css={btnStyle(size, color)}>{children}</button>;
+function CircleButton({ children, size, color, onClick }: CircleButtonProps) {
+  return (
+    <button css={btnStyle(size, color)} onClick={onClick}>
+      {children}
+    </button>
+  );
 }
 
 const btnStyle = (size: string, color: string) => css`

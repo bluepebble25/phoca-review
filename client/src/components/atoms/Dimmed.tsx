@@ -1,7 +1,11 @@
 import { css } from '@emotion/react';
 
-function Dimmed() {
-  return <div css={dimmedStyle}></div>;
+interface DimmedProps {
+  detailDimmedRef: React.RefObject<HTMLDivElement>;
+}
+
+function Dimmed({ detailDimmedRef }: DimmedProps) {
+  return <div css={dimmedStyle} ref={detailDimmedRef}></div>;
 }
 
 const dimmedStyle = css`
