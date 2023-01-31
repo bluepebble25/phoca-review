@@ -46,6 +46,15 @@ class CardApi {
 
     return res;
   }
+
+  static async deleteCard(id: number) {
+    try {
+      const res = await axios.delete(`/cards/${id}`);
+      return res;
+    } catch (err) {
+      console.log(err);
+    }
+  }
 }
 
 export default CardApi;

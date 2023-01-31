@@ -15,8 +15,9 @@ import {
 import { colorPalette } from '../_lib/styles/colorPalette';
 import FlipButton from '../components/atoms/Buttons/FlipButton';
 import useFetchCard from '../hooks/useFetchCard';
-import useOnClickOutside from '../hooks/useOnClickOutside';
+import useOnClickOutside from '../hooks/useOnClickElement';
 import ConfirmModal from '../components/molecules/ConfirmModal';
+import CardApi from '../_lib/api/CardApi';
 
 function CardDetailPage() {
   const [isCardFront, setIsCardFront] = useState(true);
@@ -67,7 +68,10 @@ function CardDetailPage() {
           cancleText="취소"
           okText="삭제"
           cancleHandler={() => setIsModalShown(false)}
-          okHandler={() => {}}
+          okHandler={() => {
+            CardApi.deleteCard(id);
+            navigate('/cards');
+          }}
         />
         <div css={modalStyle}>
           <div
