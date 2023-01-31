@@ -278,12 +278,13 @@ const deleteCard = (req, res) => {
   }
 
   const card = readCard(filename);
-  const imageName = [card.front.image.filename, card.back.image.filename];
+  const images = [card.front.image, card.back.image];
 
   try {
-    imageName.forEach((name) => {
-      if (name !== '') {
-        deleteFile('uploads/images/' + name);
+    images.forEach((image) => {
+      console.log(image);
+      if (image) {
+        deleteFile('uploads/images/' + image.filename);
         console.log('이미지 삭제 성공');
       }
     });
