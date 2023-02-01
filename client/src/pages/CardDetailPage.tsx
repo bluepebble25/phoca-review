@@ -15,7 +15,7 @@ import {
 import { colorPalette } from '../_lib/styles/colorPalette';
 import FlipButton from '../components/atoms/Buttons/FlipButton';
 import useFetchCard from '../hooks/useFetchCard';
-import useOnClickOutside from '../hooks/useOnClickElement';
+import useOnClickElement from '../hooks/useOnClickElement';
 import ConfirmModal from '../components/molecules/ConfirmModal';
 import CardApi from '../_lib/api/CardApi';
 
@@ -34,8 +34,8 @@ function CardDetailPage() {
   };
 
   const card = useFetchCard(id);
-  useOnClickOutside(detailDimmedRef, goBack);
-  useOnClickOutside(modalDimmedRef, () => {
+  useOnClickElement(detailDimmedRef, goBack);
+  useOnClickElement(modalDimmedRef, () => {
     setIsModalShown(!isModalShown);
   });
 

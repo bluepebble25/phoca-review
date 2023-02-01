@@ -3,7 +3,6 @@ import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import BookPage from './pages/BookPage';
 import CardDetailPage from './pages/CardDetailPage';
 import CreateCardPage from './pages/CreateCardPage';
-import EditCardPage from './pages/EditCardPage';
 import Nav from './components/organisms/Nav';
 
 const MainLayout = () => {
@@ -15,21 +14,12 @@ const MainLayout = () => {
   );
 };
 
-const BookPageLayout = () => {
-  return (
-    <>
-      <BookPage />
-      <Outlet />
-    </>
-  );
-};
-
 function App() {
   return (
     <Routes>
       <Route element={<MainLayout />}>
         <Route index element={<Navigate to="/cards" />} />
-        <Route path="/cards" element={<BookPageLayout />}>
+        <Route path="/cards" element={<BookPage />}>
           <Route path="/cards/:id" element={<CardDetailPage />} />
         </Route>
       </Route>
