@@ -137,6 +137,7 @@ const containerStyle = css`
   width: 100%;
   height: 100vh;
   top: 0;
+  z-index: 1000;
 `;
 
 const modalStyle = css`

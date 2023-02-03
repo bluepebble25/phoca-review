@@ -5,9 +5,12 @@ import ArrowButton from '../atoms/ArrowButton';
 import Cover from '../molecules/Cover';
 import Paper from './Paper';
 import CardApi from '../../_lib/api/CardApi';
+import { Outlet } from 'react-router-dom';
+import { genNewPapers } from '../../_lib/utils';
 
 function Book() {
   const [cardList, setCardList] = useState<any[]>([]);
+  const [paperList, setPaperList] = useState<any[]>([]);
   const [location, setLocation] = useState(0);
   const [isBookOpen, setIsBookOpen] = useState(false);
   const [isCoversFlipped, setIsCoversFlipped] = useState([false, false]);
@@ -25,9 +28,9 @@ function Book() {
     // 만약 장(paper) 번호가 4의 배수이고, 마지막 페이지가 아니며, 다음 페이지에 해당하는 데이터가 아직 안불려온 경우 fetch
     // (종이의 수가 4의 배수라는 것은 API에서 한번에 오는 데이터의 크기인 32를 cardPerPage * 2로 나눈 값)
     if (
-      cardList.length % 4 === 0 &&
-      cardList.length !== numOfPapers &&
-      cardList.length === location
+      paperList.length % 4 === 0 &&
+      paperList.length !== numOfPapers &&
+      paperList.length === location
     ) {
       fetchCards(location / 4 + 1);
     }
@@ -36,8 +39,9 @@ function Book() {
   const fetchCards = async (page: number) => {
     const res = await CardApi.getAllCards(page);
     let fetchedCards = res.data.results; // 최대 32개의 카드 데이터
-    let totalCard = parseInt(res.headers['x-total-count']!);
+    setCardList([...cardList, fetchedCards]);
 
+    let totalCard = parseInt(res.headers['x-total-count']!);
     let totalPage = Math.ceil(totalCard / (cardPerPage * 2));
 
     if (totalCard !== totalCardNum) {
@@ -46,25 +50,14 @@ function Book() {
       setMaxLocation(totalPage + 2);
     }
 
-    let newPapersNum = Math.ceil(fetchedCards.length / (cardPerPage * 2));
-    let splitedCards = [];
+    const newPaperList = genNewPapers(
+      fetchedCards,
+      paperList.length,
+      totalPage,
+      cardPerPage
+    );
 
-    for (let i = 1; i <= newPapersNum; i++) {
-      let chunkPerPaper = {
-        paper: cardList.length + i,
-        isFlipped: false,
-        zIndex: totalPage - cardList.length - i + 1,
-        cardData: [
-          fetchedCards.slice(
-            (i - 1) * cardPerPage * 2,
-            (i - 1) * cardPerPage * 2 + 4
-          ),
-          fetchedCards.slice((i * 2 - 1) * cardPerPage, i * cardPerPage * 2),
-        ],
-      };
-      splitedCards.push(chunkPerPaper);
-    }
-    setCardList([...cardList, ...splitedCards]);
+    setPaperList([...paperList, ...newPaperList]);
   };
 
   const onClickNextButton = () => {
@@ -84,21 +77,21 @@ function Book() {
         setIsBookOpen(false);
         setIsCoversFlipped([isCoversFlipped[0], !isCoversFlipped[1]]);
       } else if (
-        cardList.length % 4 === 0 &&
-        cardList.length !== numOfPapers &&
-        cardList.length === location
+        paperList.length % 4 === 0 &&
+        paperList.length !== numOfPapers &&
+        paperList.length === location
       ) {
         fetchCards(location / 2);
       } else {
         // 페이지 넘기는 함수
         const toggleArr = () => {
-          return cardList.map((cards) =>
+          return paperList.map((cards) =>
             cards.paper === location
               ? { ...cards, isFlipped: !cards.isFlipped, zIndex: -cards.zIndex }
               : cards
           );
         };
-        setCardList(toggleArr());
+        setPaperList(toggleArr());
       }
       setLocation(location + 1);
     }
@@ -113,12 +106,12 @@ function Book() {
         setIsBookOpen(true);
         setIsCoversFlipped([isCoversFlipped[0], !isCoversFlipped[1]]);
       } else {
-        const toggledArr = cardList.map((cards) =>
+        const toggledArr = paperList.map((cards) =>
           cards.paper === location - 1
             ? { ...cards, isFlipped: !cards.isFlipped, zIndex: -cards.zIndex }
             : cards
         );
-        setCardList(toggledArr);
+        setPaperList(toggledArr);
       }
       setLocation(location - 1);
     }
@@ -137,7 +130,7 @@ function Book() {
       <div css={sceneStyle}>
         <div css={bookStyle(isBookOpen, isCoversFlipped[1])}>
           <Cover order="first" isFlipped={isCoversFlipped[0]} />
-          {cardList.map((cards) => {
+          {paperList.map((cards) => {
             return (
               <Paper
                 key={cards.paper}
@@ -157,6 +150,8 @@ function Book() {
         isBookOpen={isBookOpen}
         onClick={onClickNextButton}
       />
+
+      <Outlet />
     </div>
   );
 }

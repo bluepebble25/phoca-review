@@ -5,7 +5,7 @@ import CircleButton from '../components/atoms/Buttons/CircleButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { colorPalette } from '../_lib/styles/colorPalette';
-import { Link, Outlet } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function BookPage() {
   return (
@@ -18,7 +18,6 @@ function BookPage() {
           </CircleButton>
         </Link>
       </div>
-      <Outlet />
     </div>
   );
 }
