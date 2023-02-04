@@ -39,7 +39,7 @@ function Book() {
   const fetchCards = async (page: number) => {
     const res = await CardApi.getAllCards(page);
     let fetchedCards = res.data.results; // 최대 32개의 카드 데이터
-    setCardList([...cardList, fetchedCards]);
+    setCardList([...cardList, ...fetchedCards]);
 
     let totalCard = parseInt(res.headers['x-total-count']!);
     let totalPage = Math.ceil(totalCard / (cardPerPage * 2));
