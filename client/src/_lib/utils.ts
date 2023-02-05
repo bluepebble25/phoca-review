@@ -24,3 +24,23 @@ export function genNewPapers(
   }
   return newPaperList;
 }
+
+export function reorderCards(
+  cardList: any[],
+  paperList: any[],
+  cardPerPage: number
+) {
+  let copiedPapers = paperList.slice();
+  let result = copiedPapers.map((paper, i) => {
+    let splited = [
+      cardList.slice(i * cardPerPage * 2, i * cardPerPage * 2 + 4),
+      cardList.slice(
+        (i + 1) * cardPerPage * 2 - cardPerPage,
+        (i + 1) * cardPerPage * 2
+      ),
+    ];
+    paper.cardData = splited;
+    return paper;
+  });
+  return result;
+}
