@@ -30,6 +30,8 @@ export function reorderCards(
   paperList: any[],
   cardPerPage: number
 ) {
+  console.log('BEFORE:: cardList', cardList);
+  console.log('BEFORE:: paperList', paperList);
   let copiedPapers = paperList.slice();
   let result = copiedPapers.map((paper, i) => {
     let splited = [
@@ -42,5 +44,6 @@ export function reorderCards(
     paper.cardData = splited;
     return paper;
   });
+  console.log('재배열 결과', result);
   return result;
 }

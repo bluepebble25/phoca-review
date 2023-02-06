@@ -6,7 +6,7 @@ import Cover from '../molecules/Cover';
 import Paper from './Paper';
 import CardApi from '../../_lib/api/CardApi';
 import { Outlet } from 'react-router-dom';
-import { genNewPapers } from '../../_lib/utils';
+import { genNewPapers, reorderCards } from '../../_lib/utils';
 
 function Book() {
   const [cardList, setCardList] = useState<any[]>([]);
@@ -58,6 +58,12 @@ function Book() {
     );
 
     setPaperList([...paperList, ...newPaperList]);
+
+    reorderCards(
+      [...cardList, ...fetchedCards],
+      [...paperList, ...newPaperList],
+      cardPerPage
+    );
   };
 
   const onClickNextButton = () => {
@@ -117,6 +123,13 @@ function Book() {
     }
   }
 
+  const onDeleteCardHandler = (id: number) => {
+    let newCardList = cardList.filter((card) => card.id !== id);
+    let newPaperList = reorderCards(newCardList, paperList, cardPerPage);
+    setCardList(newCardList);
+    setPaperList(newPaperList);
+  };
+
   return (
     <div css={containerStyle}>
       <ArrowButton
@@ -151,7 +164,7 @@ function Book() {
         onClick={onClickNextButton}
       />
 
-      <Outlet />
+      <Outlet context={onDeleteCardHandler} />
     </div>
   );
 }

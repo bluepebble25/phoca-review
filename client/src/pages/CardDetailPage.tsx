@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import React, { useState, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useOutletContext } from 'react-router-dom';
 
 import Dimmed from '../components/atoms/Dimmed';
 import Card from '../components/atoms/Card';
@@ -26,6 +27,9 @@ function CardDetailPage() {
 
   const params = useParams();
   const id = parseInt(params.id!);
+  const card = useFetchCard(id);
+
+  /* Modal의 dimmed 부분을 클릭하면 닫는 로직 */
   const detailDimmedRef = useRef<HTMLDivElement>(null);
   const modalDimmedRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -33,11 +37,13 @@ function CardDetailPage() {
     navigate('/cards');
   };
 
-  const card = useFetchCard(id);
   useOnClickElement(detailDimmedRef, goBack);
   useOnClickElement(modalDimmedRef, () => {
     setIsModalShown(!isModalShown);
   });
+
+  /* handler functions */
+  const onDeleteCardHandler: Function = useOutletContext();
 
   const onClickCardToggle = () => {
     setIsCardFront(!isCardFront);
@@ -51,6 +57,7 @@ function CardDetailPage() {
     setIsFlipShown(false);
   };
 
+  /* Rendering */
   if (!card) {
     return (
       <div css={containerStyle}>
@@ -70,6 +77,7 @@ function CardDetailPage() {
           cancleHandler={() => setIsModalShown(false)}
           okHandler={() => {
             CardApi.deleteCard(id);
+            onDeleteCardHandler(id);
             navigate('/cards');
           }}
         />
