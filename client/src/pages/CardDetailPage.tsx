@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import React, { useState, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useOutletContext } from 'react-router-dom';
+import html2canvas from 'html2canvas';
 
 import Dimmed from '../components/atoms/Dimmed';
 import Card from '../components/atoms/Card';
@@ -20,6 +21,11 @@ import useOnClickElement from '../hooks/useOnClickElement';
 import ConfirmModal from '../components/molecules/ConfirmModal';
 import CardApi from '../_lib/api/CardApi';
 
+export type cardRefsType = {
+  front: React.RefObject<HTMLDivElement>;
+  back: React.RefObject<HTMLDivElement>;
+};
+
 function CardDetailPage() {
   const [isCardFront, setIsCardFront] = useState(true);
   const [isFlipShown, setIsFlipShown] = useState(false);
@@ -28,6 +34,11 @@ function CardDetailPage() {
   const params = useParams();
   const id = parseInt(params.id!);
   const card = useFetchCard(id);
+
+  /* Card 이미지 capture 영역 지정하기 위한 ref  */
+  const cardFrontRef = useRef(null);
+  const cardBackRef = useRef(null);
+  const cardRefs: cardRefsType = { front: cardFrontRef, back: cardBackRef };
 
   /* Modal의 dimmed 부분을 클릭하면 닫는 로직 */
   const detailDimmedRef = useRef<HTMLDivElement>(null);
@@ -55,6 +66,52 @@ function CardDetailPage() {
 
   const onMouseLeaveCard = () => {
     setIsFlipShown(false);
+  };
+
+  const onClickDownload = () => {
+    if (cardRefs.front.current && cardRefs.back.current) {
+      const Front = cardRefs.front.current;
+      const Back = cardRefs.back.current;
+
+      /* html2canvas options 설명
+        - allowTaint : CORS 이미지를 허용할 것인지 true/false
+        - backgroundColor : 뒷 배경의 색깔 지정
+      */
+      html2canvas(Front, {
+        allowTaint: true,
+        backgroundColor: 'rgba(0,0,0,0)',
+      }).then((canvas) => {
+        canvas.id = 'img1';
+        document.body.appendChild(canvas);
+      });
+
+      // 뒷면이 먼저 캡처되는 것 방지용 타이머
+      setTimeout(() => {
+        html2canvas(Back, {
+          allowTaint: true,
+          backgroundColor: 'rgba(0,0,0,0)',
+        }).then((canvas) => {
+          /*
+            canvas에는 뒤집어진 뒷면이 캡쳐되어 있는 상태
+            이 이미지 다시 뒤집어서 그릴 새 캔버스 생성
+          */
+          const flippedCanvas = document.createElement('canvas');
+          flippedCanvas.id = 'img2';
+          flippedCanvas.width = canvas.width;
+          flippedCanvas.height = canvas.height;
+          document.body.appendChild(flippedCanvas);
+          const ctx = flippedCanvas.getContext('2d');
+
+          // canvas를 이미지화 해서 캔버스에 좌우반전해서 그림
+          const img = new Image();
+          img.src = canvas.toDataURL('image/png');
+          img.onload = () => {
+            ctx?.scale(-1, 1);
+            ctx?.drawImage(img, img.width * -1, 0);
+          };
+        });
+      }, 1);
+    }
   };
 
   /* Rendering */
@@ -92,6 +149,7 @@ function CardDetailPage() {
             </div>
 
             <Card
+              cardRefs={cardRefs}
               cardCustomFront={card.cardCustomFront}
               cardCustomBack={card.cardCustomBack}
               cardInfo={card.cardInfo}
@@ -113,7 +171,11 @@ function CardDetailPage() {
               />
             </CircleButton>
             <div css={rightGroupStyle}>
-              <CircleButton size="46px" color={colorPalette.darkgray}>
+              <CircleButton
+                size="46px"
+                color={colorPalette.darkgray}
+                onClick={onClickDownload}
+              >
                 <FontAwesomeIcon
                   icon={faDownload}
                   fontSize="24px"

@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+import { cardRefsType } from '../../pages/CardDetailPage';
 import { colorPalette, gradient } from '../../_lib/styles/colorPalette';
 import { shadow } from '../../_lib/styles/effectPalette';
 
@@ -9,6 +10,7 @@ interface CardCustomType {
 }
 
 interface CardProps {
+  cardRefs?: cardRefsType;
   cardCustomFront: CardCustomType;
   cardCustomBack: CardCustomType;
   cardInfo: {
@@ -23,6 +25,7 @@ interface CardProps {
 }
 
 interface CardFaceProps {
+  cardRefs?: cardRefsType;
   cardCustomFront?: CardCustomType;
   cardCustomBack?: CardCustomType;
   faceType: 'front' | 'back';
@@ -34,6 +37,7 @@ interface CardFaceProps {
 }
 
 const CardFace: React.FC<CardFaceProps> = ({
+  cardRefs,
   cardCustomFront,
   cardCustomBack,
   faceType,
@@ -42,6 +46,7 @@ const CardFace: React.FC<CardFaceProps> = ({
 }) => {
   return (
     <div
+      ref={cardRefs && (faceType === 'front' ? cardRefs.front : cardRefs.back)}
       css={[
         cardFaceStyle(
           faceType === 'front' ? cardCustomFront! : cardCustomBack!
@@ -64,6 +69,7 @@ const CardFace: React.FC<CardFaceProps> = ({
 };
 
 function Card({
+  cardRefs,
   cardCustomFront,
   cardCustomBack,
   cardInfo,
@@ -74,12 +80,14 @@ function Card({
     <div css={sceneStyle}>
       <div css={cardStyle(isCardFront)}>
         <CardFace
+          cardRefs={cardRefs}
           cardCustomFront={cardCustomFront}
           faceType="front"
           cardInfo={cardInfo}
           cardContents={cardContents.front}
         />
         <CardFace
+          cardRefs={cardRefs}
           cardCustomBack={cardCustomBack}
           faceType="back"
           cardInfo={cardInfo}
