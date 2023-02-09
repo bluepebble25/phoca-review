@@ -7,6 +7,8 @@ import html2canvas from 'html2canvas';
 import Dimmed from '../components/atoms/Dimmed';
 import Card from '../components/atoms/Card';
 import CircleButton from '../components/atoms/Buttons/CircleButton';
+import FlipButton from '../components/atoms/Buttons/FlipButton';
+import ConfirmModal from '../components/molecules/ConfirmModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faDownload,
@@ -15,11 +17,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import { colorPalette } from '../_lib/styles/colorPalette';
-import FlipButton from '../components/atoms/Buttons/FlipButton';
 import useFetchCard from '../hooks/useFetchCard';
 import useOnClickElement from '../hooks/useOnClickElement';
-import ConfirmModal from '../components/molecules/ConfirmModal';
 import CardApi from '../_lib/api/CardApi';
+import { downloadFile } from '../_lib/utils';
 
 export type cardRefsType = {
   front: React.RefObject<HTMLDivElement>;
@@ -75,19 +76,22 @@ function CardDetailPage() {
 
       /* html2canvas options 설명
         - allowTaint : CORS 이미지를 허용할 것인지 true/false
-        - backgroundColor : 뒷 배경의 색깔 지정
+        - useCORS : CORS 이미지를 toDataURL() 할 수 있게 허용 true/false
+        - backgroundColor : 뒷 배경의 색깔 지정. rgba(0,0,0,0)으로 투명하게
       */
       html2canvas(Front, {
+        useCORS: true,
         allowTaint: true,
         backgroundColor: 'rgba(0,0,0,0)',
       }).then((canvas) => {
-        canvas.id = 'img1';
-        document.body.appendChild(canvas);
+        const img1URl = canvas.toDataURL('image/png');
+        downloadFile(img1URl, `${id}-${card.cardInfo.title}_front`);
       });
 
       // 뒷면이 먼저 캡처되는 것 방지용 타이머
       setTimeout(() => {
         html2canvas(Back, {
+          useCORS: true,
           allowTaint: true,
           backgroundColor: 'rgba(0,0,0,0)',
         }).then((canvas) => {
@@ -96,9 +100,9 @@ function CardDetailPage() {
             이 이미지 다시 뒤집어서 그릴 새 캔버스 생성
           */
           const flippedCanvas = document.createElement('canvas');
-          flippedCanvas.id = 'img2';
           flippedCanvas.width = canvas.width;
           flippedCanvas.height = canvas.height;
+          flippedCanvas.style.display = 'none';
           document.body.appendChild(flippedCanvas);
           const ctx = flippedCanvas.getContext('2d');
 
@@ -108,6 +112,9 @@ function CardDetailPage() {
           img.onload = () => {
             ctx?.scale(-1, 1);
             ctx?.drawImage(img, img.width * -1, 0);
+            const img2URl = flippedCanvas.toDataURL('image/png');
+            downloadFile(img2URl, `${id}-${card.cardInfo.title}_back`);
+            document.body.removeChild(flippedCanvas);
           };
         });
       }, 1);

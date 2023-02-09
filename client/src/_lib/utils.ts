@@ -45,3 +45,17 @@ export function reorderCards(
 
   return result;
 }
+
+/**
+ * a 태그를 이용해 자동으로 파일을 다운로드하게 해주는 함수
+ * @param fileUrl 다운로드할 파일의 url
+ * @param fileName 다운로드할 때 저장할 이름
+ */
+export function downloadFile(fileUrl: string, fileName: string) {
+  const a = document.createElement('a');
+  a.href = fileUrl;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
