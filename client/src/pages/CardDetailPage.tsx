@@ -84,40 +84,37 @@ function CardDetailPage() {
         allowTaint: true,
         backgroundColor: 'rgba(0,0,0,0)',
       }).then((canvas) => {
-        const img1URl = canvas.toDataURL('image/png');
-        downloadFile(img1URl, `${id}-${card.cardInfo.title}_front`);
+        const img1URL = canvas.toDataURL('image/png');
+        downloadFile(img1URL, `${id}-${card.cardInfo.title}_front`);
       });
 
-      // 뒷면이 먼저 캡처되는 것 방지용 타이머
-      setTimeout(() => {
-        html2canvas(Back, {
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: 'rgba(0,0,0,0)',
-        }).then((canvas) => {
-          /*
-            canvas에는 뒤집어진 뒷면이 캡쳐되어 있는 상태
-            이 이미지 다시 뒤집어서 그릴 새 캔버스 생성
-          */
-          const flippedCanvas = document.createElement('canvas');
-          flippedCanvas.width = canvas.width;
-          flippedCanvas.height = canvas.height;
-          flippedCanvas.style.display = 'none';
-          document.body.appendChild(flippedCanvas);
-          const ctx = flippedCanvas.getContext('2d');
+      html2canvas(Back, {
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: 'rgba(0,0,0,0)',
+      }).then((canvas) => {
+        /*
+          canvas에는 뒤집어진 뒷면이 캡쳐되어 있는 상태
+          이 이미지 다시 뒤집어서 그릴 새 캔버스 생성
+        */
+        const flippedCanvas = document.createElement('canvas');
+        flippedCanvas.width = canvas.width;
+        flippedCanvas.height = canvas.height;
+        flippedCanvas.style.display = 'none';
+        document.body.appendChild(flippedCanvas);
+        const ctx = flippedCanvas.getContext('2d');
 
-          // canvas를 이미지화 해서 캔버스에 좌우반전해서 그림
-          const img = new Image();
-          img.src = canvas.toDataURL('image/png');
-          img.onload = () => {
-            ctx?.scale(-1, 1);
-            ctx?.drawImage(img, img.width * -1, 0);
-            const img2URl = flippedCanvas.toDataURL('image/png');
-            downloadFile(img2URl, `${id}-${card.cardInfo.title}_back`);
-            document.body.removeChild(flippedCanvas);
-          };
-        });
-      }, 1);
+        // canvas를 이미지화 해서 캔버스에 좌우반전해서 그림
+        const img = new Image();
+        img.src = canvas.toDataURL('image/png');
+        img.onload = () => {
+          ctx?.scale(-1, 1);
+          ctx?.drawImage(img, img.width * -1, 0);
+          const img2URL = flippedCanvas.toDataURL('image/png');
+          downloadFile(img2URL, `${id}-${card.cardInfo.title}_back`);
+          document.body.removeChild(flippedCanvas);
+        };
+      });
     }
   };
 
