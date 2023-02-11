@@ -8,6 +8,7 @@ import { faImage } from '@fortawesome/free-solid-svg-icons';
 
 interface CardOptionItemProps {
   inputColorRef?: React.Ref<HTMLInputElement>;
+  fileRefs?: React.Ref<HTMLInputElement>[];
   optionName: string;
   fillingList: Array<string>;
   imageList?: Array<string> | undefined;
@@ -20,6 +21,7 @@ interface CardOptionItemProps {
 
 function CardOptionItem({
   inputColorRef,
+  fileRefs,
   optionName,
   fillingList,
   imageList,
@@ -81,6 +83,7 @@ function CardOptionItem({
                 <FontAwesomeIcon icon={faImage} />
               </label>
               <input
+                ref={fileRefs && fileRefs[0]}
                 id="image1"
                 type="file"
                 accept="image/*"
@@ -93,6 +96,7 @@ function CardOptionItem({
                 <FontAwesomeIcon icon={faImage} />
               </label>
               <input
+                ref={fileRefs && fileRefs[1]}
                 id="image2"
                 type="file"
                 accept="image/*"

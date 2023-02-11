@@ -40,10 +40,14 @@ function CreateCardPage({ isEditPage }: PageProps) {
   });
 
   const maxLength = { title: 60, author: 24, contents: 340 };
-  const inputColorRef = useRef<HTMLInputElement>(null); // 무지개빛 이미지를 클릭하면 원격으로 <input type="color"/>를 클릭하기 위한 속성
   const params = useParams();
   const id = isEditPage && params.id ? parseInt(params.id) : null;
   const card = useFetchCard(id);
+
+  const inputColorRef = useRef<HTMLInputElement>(null); // 무지개빛 이미지를 클릭하면 원격으로 <input type="color"/>를 클릭하기 위한 속성
+  const fileRef1 = useRef<HTMLInputElement>(null); // onFileChange 감지 잘 되도록 file input을 초기화시킬 때 사용
+  const fileRef2 = useRef<HTMLInputElement>(null);
+  const fileRefs = [fileRef1, fileRef2];
 
   useEffect(() => {
     if (isEditPage && card) {
@@ -53,6 +57,19 @@ function CreateCardPage({ isEditPage }: PageProps) {
       setCardCustomBack({ ...cardCustomBack, ...card.cardCustomBack });
     }
   }, [card]);
+
+  /**
+   * file input의 value를 초기화시기 위해 사용
+   * @param isCardFront
+   */
+  const initializeFile = (isCardFront: boolean) => {
+    if (fileRefs && fileRefs[0].current && fileRefs[1].current)
+      if (isCardFront) {
+        fileRefs[0].current.value = '';
+      } else {
+        fileRefs[1].current.value = '';
+      }
+  };
 
   const onClickSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -161,16 +178,19 @@ function CreateCardPage({ isEditPage }: PageProps) {
         (type === 'color' && target.value !== 'colorPicker') ||
         type === 'gradient'
       ) {
+        initializeFile(isCardFront);
         isCardFront
           ? setCardCustomFront({
               ...cardCustomFront,
               type: type,
               value: target.value,
+              file: new File([], 'file1'),
             })
           : setCardCustomBack({
               ...cardCustomBack,
               type: type,
               value: target.value,
+              file: new File([], 'file1'),
             });
       }
     }
@@ -208,16 +228,19 @@ function CreateCardPage({ isEditPage }: PageProps) {
     isCardFront: boolean,
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
+    initializeFile(isCardFront);
     isCardFront
       ? setCardCustomFront({
           ...cardCustomFront,
           type: 'color',
           value: e.target.value,
+          file: new File([], 'file1'),
         })
       : setCardCustomBack({
           ...cardCustomBack,
           type: 'color',
           value: e.target.value,
+          file: new File([], 'file2'),
         });
   };
 
@@ -303,6 +326,7 @@ function CreateCardPage({ isEditPage }: PageProps) {
 
             <CardOptionList
               inputColorRef={inputColorRef}
+              fileRefs={fileRefs}
               onClickColorChip={onClickColorChip}
               onChangeColorPicker={(e: React.ChangeEvent<HTMLInputElement>) =>
                 onChangeColorPicker(isCardFront, e)

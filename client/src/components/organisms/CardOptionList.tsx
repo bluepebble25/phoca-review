@@ -8,6 +8,7 @@ import React from 'react';
 
 interface CardOptionsProps {
   inputColorRef: React.Ref<HTMLInputElement>;
+  fileRefs: React.Ref<HTMLInputElement>[];
   onClickColorChip: React.MouseEventHandler;
   onChangeColorPicker: React.ChangeEventHandler;
   onFileChange: React.ChangeEventHandler;
@@ -16,6 +17,7 @@ interface CardOptionsProps {
 
 function CardOptions({
   inputColorRef,
+  fileRefs,
   onClickColorChip,
   onChangeColorPicker,
   onFileChange,
@@ -54,6 +56,7 @@ function CardOptions({
         isCardFront={isCardFront}
       />
       <CardOptionItem
+        fileRefs={fileRefs}
         type={'gradient'}
         optionName="그라데이션/이미지 배경"
         fillingList={gradientList}
