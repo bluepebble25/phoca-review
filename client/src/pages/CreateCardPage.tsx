@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate, createBrowserRouter } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Button from '../components/atoms/Buttons/Button';
 import Input from '../components/atoms/Input/Input';
 import TextArea from '../components/atoms/Input/TextArea';
@@ -295,7 +295,7 @@ function CreateCardPage({ isEditPage }: PageProps) {
   return (
     <div css={backgroundStyle}>
       <div css={containerStyle}>
-        <Logo margin="36px" />
+        <Logo margin="36px" shouldBlockPage={true} />
         <div css={innerStyle}>
           <CardPreview
             cardCustomFront={cardCustomFront}
