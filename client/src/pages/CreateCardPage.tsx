@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, createBrowserRouter } from 'react-router-dom';
 import Button from '../components/atoms/Buttons/Button';
 import Input from '../components/atoms/Input/Input';
 import TextArea from '../components/atoms/Input/TextArea';
@@ -50,22 +50,28 @@ function CreateCardPage({ isEditPage }: PageProps) {
   const fileRefs = [fileRef1, fileRef2];
 
   const navigate = useNavigate();
-  useEffect(() => {
-    const preventGoBack = () => {
-      window.history.pushState(null, '', window.location.href);
-      const result = window.confirm(
-        '뒤로가기를 하면 현재 작성하고 있는 사항을 모두 잃게 되는데 괜찮겠어요?'
-      );
-      if (result) {
-        navigate('/');
-      }
-    };
+  const preventGoBack = () => {
+    window.history.pushState(null, '', window.location.href);
+    const result = window.confirm(
+      '뒤로가기를 하면 현재 작성하고 있는 사항을 모두 잃게 되는데 괜찮겠어요?'
+    );
+    if (result) {
+      navigate('/');
+    }
+  };
+  const preventClose = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = '';
+  };
 
+  useEffect(() => {
     window.history.pushState(null, '', window.location.href);
     window.addEventListener('popstate', preventGoBack);
+    window.addEventListener('beforeunload', preventClose);
 
     return () => {
       window.removeEventListener('popstate', preventGoBack);
+      window.removeEventListener('beforeunload', preventClose);
     };
   }, []);
 
