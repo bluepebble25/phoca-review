@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Button from '../components/atoms/Buttons/Button';
 import Input from '../components/atoms/Input/Input';
 import TextArea from '../components/atoms/Input/TextArea';
@@ -10,6 +10,7 @@ import CardOptionList from '../components/organisms/CardOptionList';
 import CardApi from '../_lib/api/CardApi';
 import useFetchCard from '../hooks/useFetchCard';
 import Card from '../_lib/dto/Card';
+import { useBlock } from '../hooks/useBlock';
 import { colorPalette } from '../_lib/styles/colorPalette';
 
 interface PageProps {
@@ -42,38 +43,15 @@ function CreateCardPage({ isEditPage }: PageProps) {
   const params = useParams();
   const id = isEditPage && params.id ? parseInt(params.id) : null;
   const card = useFetchCard(id);
+  let message =
+    '뒤로가기를 하면 현재 작성하고 있는 사항을 모두 잃게 되는데 괜찮겠어요?';
+  useBlock(message);
 
   /* Refs */
   const inputColorRef = useRef<HTMLInputElement>(null); // 무지개빛 이미지를 클릭하면 원격으로 <input type="color"/>를 클릭하기 위한 속성
   const fileRef1 = useRef<HTMLInputElement>(null); // onFileChange 감지 잘 되도록 file input을 초기화시킬 때 사용
   const fileRef2 = useRef<HTMLInputElement>(null);
   const fileRefs = [fileRef1, fileRef2];
-
-  const navigate = useNavigate();
-  const preventGoBack = () => {
-    window.history.pushState(null, '', window.location.href);
-    const result = window.confirm(
-      '뒤로가기를 하면 현재 작성하고 있는 사항을 모두 잃게 되는데 괜찮겠어요?'
-    );
-    if (result) {
-      navigate('/');
-    }
-  };
-  const preventClose = (e: BeforeUnloadEvent) => {
-    e.preventDefault();
-    e.returnValue = '';
-  };
-
-  useEffect(() => {
-    window.history.pushState(null, '', window.location.href);
-    window.addEventListener('popstate', preventGoBack);
-    window.addEventListener('beforeunload', preventClose);
-
-    return () => {
-      window.removeEventListener('popstate', preventGoBack);
-      window.removeEventListener('beforeunload', preventClose);
-    };
-  }, []);
 
   useEffect(() => {
     if (isEditPage && card) {
@@ -82,7 +60,7 @@ function CreateCardPage({ isEditPage }: PageProps) {
       setCardCustomFront({ ...cardCustomFront, ...card.cardCustomFront });
       setCardCustomBack({ ...cardCustomBack, ...card.cardCustomBack });
     }
-  }, [card]);
+  }, [card, cardCustomFront, cardCustomBack, isEditPage]);
 
   /**
    * file input의 value를 초기화시기 위해 사용
