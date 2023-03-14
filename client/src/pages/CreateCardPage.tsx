@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Button from '../components/atoms/Buttons/Button';
 import Input from '../components/atoms/Input/Input';
 import TextArea from '../components/atoms/Input/TextArea';
@@ -18,6 +18,8 @@ interface PageProps {
 }
 
 function CreateCardPage({ isEditPage }: PageProps) {
+  const navigate = useNavigate();
+
   const [isCardFront, setIsCardFront] = useState(true);
   const [cardInfo, setCardInfo] = useState({
     title: '',
@@ -43,9 +45,9 @@ function CreateCardPage({ isEditPage }: PageProps) {
   const params = useParams();
   const id = isEditPage && params.id ? parseInt(params.id) : null;
   const card = useFetchCard(id);
-  let message =
-    '뒤로가기를 하면 현재 작성하고 있는 사항을 모두 잃게 되는데 괜찮겠어요?';
-  useBlock(message);
+  let goBackMessage =
+    '뒤로가기를 하면 변경사항이 저장되지 않고 사라지는데 괜찮으시겠어요?';
+  useBlock(goBackMessage);
 
   /* Refs */
   const inputColorRef = useRef<HTMLInputElement>(null); // 무지개빛 이미지를 클릭하면 원격으로 <input type="color"/>를 클릭하기 위한 속성
@@ -60,7 +62,7 @@ function CreateCardPage({ isEditPage }: PageProps) {
       setCardCustomFront({ ...cardCustomFront, ...card.cardCustomFront });
       setCardCustomBack({ ...cardCustomBack, ...card.cardCustomBack });
     }
-  }, [card, cardCustomFront, cardCustomBack, isEditPage]);
+  }, [isEditPage, card]);
 
   /**
    * file input의 value를 초기화시기 위해 사용
@@ -109,6 +111,7 @@ function CreateCardPage({ isEditPage }: PageProps) {
     } else {
       CardApi.createCard(formData);
     }
+    navigate('/cards');
   };
 
   const onChangeCardInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
