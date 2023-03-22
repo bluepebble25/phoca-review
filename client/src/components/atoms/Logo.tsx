@@ -13,7 +13,7 @@ function Logo({ margin, shouldBlockPage }: logoStyleProps) {
     if (shouldBlockPage) {
       e.preventDefault();
       const result = window.confirm(
-        '뒤로가기를 하면 현재 작성하고 있는 사항을 모두 잃게 되는데 괜찮겠어요?'
+        '뒤로가기를 하면 변경사항이 저장되지 않고 사라지는데 괜찮으시겠어요?'
       );
       if (result) {
         navigate('/');
