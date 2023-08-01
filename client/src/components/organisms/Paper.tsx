@@ -1,3 +1,4 @@
+import React from 'react';
 import { css } from '@emotion/react';
 import CardUI from '../atoms/CardUI';
 
@@ -114,4 +115,4 @@ const contentStyle = css`
   gap: 24px 24px;
 `;
 
-export default Paper;
+export default React.memo(Paper);
